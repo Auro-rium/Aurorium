@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurorium Nexus</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #000;
+  color: #fff;
+  font-family: monospace;
+  overflow-x: hidden;
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.container {
+  max-width: 800px;
+  margin: 100px auto;
+  padding: 0 20px;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+}
+
+p {
+  margin-bottom: 28px;
+  line-height: 1.8;
+}
+
+a {
+  color: #fff;
+  text-decoration: underline;
+}
+
+footer {
+  margin-top: 80px;
+  font-size: 0.8rem;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="stars"></canvas>
+
+<div class="container">
+
+<h1>Aurorium Nexus</h1>
+
+<img src="transhumanism.jpg" alt="Transhumanism" style="width:100%; max-width:500px; margin:40px 0; display:block;">
+
+<p>
+I’m an AI engineer deeply interested in infrastructure and system design.
+</p>
+
+<p>
+Most of my time goes into building and experimenting with things like LLM serving systems, AI agent orchestration, quantization, fine-tuning, generative AI tools, performance optimization, scalable backend architectures, and blockchain systems. I like understanding how these pieces behave in real systems, not just in theory.
+</p>
+
+<p>
+I’m curious about the intersection of AI systems, distributed systems, performance engineering, product scalability, and applied optimization theory. Building bias &gt;&gt; Tutorials and Reading. I try to reason from first principles and occasionally borrow ideas from game theory when thinking about incentives, trade-offs, and system dynamics.
+</p>
+
+<p>
+Outside of engineering, I’m interested in transhumanism, history wars, civilizational power dynamics, and singularity-focused sci-fi.
+</p>
+
+<p>
+<a href="mailto:auroriumnexus@gmail.com">auroriumnexus@gmail.com</a><br>
+<a href="https://x.com/auroriumnexus" target="_blank">X / @auroriumnexus</a>
+</p>
+
+<footer>
+© 2026 Aurorium Nexus
+</footer>
+
+</div>
+
+<script>
+const canvas = document.getElementById("stars");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let stars = [];
+
+for (let i = 0; i < 200; i++) {
+  stars.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    radius: Math.random() * 1.5,
+    velocity: Math.random() * 0.2
+  });
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#ffffff";
+
+  stars.forEach(star => {
+    ctx.beginPath();
+    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    star.y += star.velocity;
+    if (star.y > canvas.height) {
+      star.y = 0;
+      star.x = Math.random() * canvas.width;
+    }
+  });
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>
