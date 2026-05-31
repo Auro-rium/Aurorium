@@ -17,7 +17,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         return saved;
       }
     }
-    return "dark"; // Default is dark
+    return "light"; // Default is light — white, minimal, professional
   });
 
   useEffect(() => {

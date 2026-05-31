@@ -1,8 +1,8 @@
 import { FileText, Download, Eye } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 
-// Get static URL for the resume PDF processed by Vite's bundler
-const resumePdfUrl = new URL("../../assets/resume.pdf", import.meta.url).href;
+// Use relative path so Vite's base path is prepended automatically
+const resumePdfUrl = `${import.meta.env.BASE_URL}assets/Ishan-Resume.pdf`;
 
 export function ResumeSection() {
   const { theme } = useTheme();
@@ -24,7 +24,7 @@ export function ResumeSection() {
                 theme === "dark" ? "text-zinc-500" : "text-zinc-400"
               }`}
             >
-              02 / DOSSIER & CREDENTIALS
+              02 / DOSSIER &amp; CREDENTIALS
             </div>
             <h2 
               className={`text-xl font-medium tracking-tight transition-colors duration-300 ${
@@ -47,7 +47,7 @@ export function ResumeSection() {
             {/* Quick Download button */}
             <a
               href={resumePdfUrl}
-              download="Aurorium_Nexus_Resume.pdf"
+              download="Ishan-Resume.pdf"
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-mono rounded-sm transition-all shadow-sm cursor-pointer ${
                 theme === "dark"
                   ? "text-black bg-white hover:bg-zinc-200"

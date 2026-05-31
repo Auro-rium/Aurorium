@@ -23,10 +23,10 @@ export const projects: Project[] = [
   },
   {
     name: "AudioForge",
-    repoUrl: "https://github.com/Auro-rium/AudioForge",
-    label: "Benchmark-grade distributed audio ML pipeline",
-    description: "Production-ready audio ML platform for FSD50K multi-label event classification and DCASE machine anomaly detection. Orchestrates end-to-end distributed training, validation frameworks, and high-throughput FastAPI/Gradio serving with Prometheus telemetry.",
-    stack: ["PyTorch", "Torchaudio", "Transformers", "FastAPI", "Gradio", "Prometheus", "DCASE", "FSD50K"]
+    repoUrl: "https://github.com/Auro-rium/audioforge",
+    label: "Audio ML system",
+    description: "Benchmark-grade audio ML system for sound event classification and machine anomaly detection using PyTorch, Torchaudio, Hugging Face tooling, FastAPI, and Gradio.",
+    stack: ["PyTorch", "Torchaudio", "Hugging Face", "FastAPI", "Gradio"]
   },
   {
     name: "LogSage",
