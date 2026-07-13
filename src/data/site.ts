@@ -9,7 +9,7 @@ export interface SiteConfig {
   x: string;
   huggingface: string;
   leetcode: string;
-  buymeacoffee?: string;
+
   handle: string;
   headline: string;
   subheadline: string;
@@ -25,15 +25,14 @@ export const siteConfig: SiteConfig = {
   name: "Aurorium Nexus",
   role: "Applied AI Engineer & Systems Architect",
   location: "Bengaluru, India",
-  email: "auroriumnexus@gmail.com",
-  phone: "+91 91480 50325", // Realistic placeholder, can easily be clicked to copy or dial
+  email: "redacted",
+  phone: "redacted",
   github: "https://github.com/Auro-rium",
-  linkedin: "https://linkedin.com/in/auroriumnexus",
-  x: "https://x.com/auroriumnexus",
-  huggingface: "https://huggingface.co/Auro-rium",
-  leetcode: "https://leetcode.com/u/Auro-rium",
-  buymeacoffee: "https://buymeacoffee.com/auroriumnexus",
-  handle: "@auroriumnexus",
+  linkedin: "https://www.linkedin.com/in/ishantrive/",
+  x: "",
+  huggingface: "https://huggingface.co/auro-rirum",
+  leetcode: "https://leetcode.com/u/Gg2kJdIJ3w/",
+  handle: "redacted",
   headline: "Aurorium Nexus",
   subheadline: "Building practical AI systems from first principles.",
   body: "I work across RAG, agents, fine-tuning, evaluation, and backend infrastructure, with a focus on systems that are reliable, inspectable, and useful beyond the demo.",

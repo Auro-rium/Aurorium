@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { siteConfig } from "../data/site";
-import { Mail, Copy, Check, ExternalLink, Github, Linkedin, Coffee } from "lucide-react";
+import { Mail, Copy, Check, ExternalLink, Github, Linkedin } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 
 export function ContactSection() {
@@ -108,7 +108,7 @@ export function ContactSection() {
         </div>
 
         {/* Directories Grid */}
-        <div className={`grid grid-cols-2 gap-4 mt-6 ${siteConfig.buymeacoffee ? "md:grid-cols-3 lg:grid-cols-6" : "md:grid-cols-5"}`}>
+        <div className="grid grid-cols-2 gap-4 mt-6 md:grid-cols-5">
           <a
             href={siteConfig.github}
             target="_blank"
@@ -222,7 +222,7 @@ export function ContactSection() {
                 theme === "dark" ? "text-white" : "text-black"
               }`}
             >
-              Aurorium Nexus
+              ishantrive
             </div>
           </a>
 
@@ -294,45 +294,6 @@ export function ContactSection() {
             </div>
           </a>
 
-          {siteConfig.buymeacoffee && (
-            <a
-              href={siteConfig.buymeacoffee}
-              target="_blank"
-              rel="noreferrer"
-              className={`p-4 border rounded-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md group ${
-                theme === "dark"
-                  ? "border-zinc-800 hover:border-white bg-zinc-950/40 hover:bg-zinc-900 hover:shadow-black/10"
-                  : "border-zinc-200 hover:border-black bg-zinc-50/20 hover:bg-zinc-50"
-              }`}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <Coffee 
-                  className={`w-4 h-4 transition-colors duration-300 ${
-                    theme === "dark" ? "text-zinc-500 group-hover:text-yellow-500" : "text-zinc-650 group-hover:text-yellow-600"
-                  }`} 
-                />
-                <ExternalLink 
-                  className={`w-3 h-3 transition-colors duration-300 ${
-                    theme === "dark" ? "text-zinc-650 group-hover:text-zinc-400" : "text-zinc-400 group-hover:text-zinc-600"
-                  }`} 
-                />
-              </div>
-              <div 
-                className={`text-[9px] font-mono tracking-wider transition-colors duration-300 ${
-                  theme === "dark" ? "text-zinc-500" : "text-zinc-400"
-                }`}
-              >
-                SPONSOR
-              </div>
-              <div 
-                className={`text-xs font-medium truncate mt-0.5 transition-colors duration-300 ${
-                  theme === "dark" ? "text-white" : "text-black"
-                }`}
-              >
-                Buy Me a Coffee
-              </div>
-            </a>
-          )}
         </div>
       </div>
     </section>
