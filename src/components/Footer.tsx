@@ -43,24 +43,28 @@ export function Footer() {
           >
             GitHub
           </a>
-          <a
-            href={siteConfig.x}
-            target="_blank"
-            rel="noreferrer"
-            className={`transition-colors ${
-              theme === "dark" ? "text-zinc-500 hover:text-white" : "text-zinc-600 hover:text-black"
-            }`}
-          >
-            X
-          </a>
-          <a
-            href={`mailto:${siteConfig.email}`}
-            className={`transition-colors ${
-              theme === "dark" ? "text-zinc-500 hover:text-white" : "text-zinc-600 hover:text-black"
-            }`}
-          >
-            Email
-          </a>
+          {siteConfig.x && (
+            <a
+              href={siteConfig.x}
+              target="_blank"
+              rel="noreferrer"
+              className={`transition-colors ${
+                theme === "dark" ? "text-zinc-500 hover:text-white" : "text-zinc-600 hover:text-black"
+              }`}
+            >
+              X
+            </a>
+          )}
+          {siteConfig.email.includes("@") && (
+            <a
+              href={`mailto:${siteConfig.email}`}
+              className={`transition-colors ${
+                theme === "dark" ? "text-zinc-500 hover:text-white" : "text-zinc-600 hover:text-black"
+              }`}
+            >
+              Email
+            </a>
+          )}
           <span 
             className={`hidden sm:inline transition-colors duration-300 ${
               theme === "dark" ? "text-zinc-800" : "text-zinc-300"

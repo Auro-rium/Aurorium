@@ -83,28 +83,32 @@ export function Header() {
             >
               <Github className="w-4 h-4" />
             </a>
-            <a
-              href={siteConfig.x}
-              target="_blank"
-              rel="noreferrer"
-              className={`transition-colors flex items-center justify-center ${
-                theme === "dark" ? "text-zinc-400 hover:text-white" : "text-zinc-500 hover:text-black"
-              }`}
-              title="X"
-            >
-              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-              </svg>
-            </a>
-            <a
-              href={`mailto:${siteConfig.email}`}
-              className={`transition-colors ${
-                theme === "dark" ? "text-zinc-400 hover:text-white" : "text-zinc-500 hover:text-black"
-              }`}
-              title="Email"
-            >
-              <Mail className="w-4 h-4" />
-            </a>
+            {siteConfig.x && (
+              <a
+                href={siteConfig.x}
+                target="_blank"
+                rel="noreferrer"
+                className={`transition-colors flex items-center justify-center ${
+                  theme === "dark" ? "text-zinc-400 hover:text-white" : "text-zinc-500 hover:text-black"
+                }`}
+                title="X"
+              >
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+              </a>
+            )}
+            {siteConfig.email.includes("@") && (
+              <a
+                href={`mailto:${siteConfig.email}`}
+                className={`transition-colors ${
+                  theme === "dark" ? "text-zinc-400 hover:text-white" : "text-zinc-500 hover:text-black"
+                }`}
+                title="Email"
+              >
+                <Mail className="w-4 h-4" />
+              </a>
+            )}
 
             <span className={`w-[1px] h-3 transition-colors ${
               theme === "dark" ? "bg-zinc-800" : "bg-zinc-200"

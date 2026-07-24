@@ -6,6 +6,7 @@ import { useTheme } from "../context/ThemeContext";
 export function ContactSection() {
   const { theme } = useTheme();
   const [copied, setCopied] = useState(false);
+  const hasPublicEmail = siteConfig.email.includes("@");
 
   const copyEmail = () => {
     navigator.clipboard.writeText(siteConfig.email);
@@ -52,7 +53,7 @@ export function ContactSection() {
             theme === "dark" ? "border-zinc-800 bg-zinc-950" : "border-zinc-200 bg-zinc-50/50"
           }`}
         >
-          <div className="md:col-span-8">
+          <div className={hasPublicEmail ? "md:col-span-8" : "md:col-span-12"}>
             <h3 
               className={`text-sm font-semibold tracking-tight mb-3 font-sans transition-colors duration-300 ${
                 theme === "dark" ? "text-white" : "text-black"
@@ -69,6 +70,7 @@ export function ContactSection() {
             </p>
           </div>
           
+          {hasPublicEmail && (
           <div className="md:col-span-4 flex flex-col gap-2.5">
             {/* Direct Send button */}
             <a
@@ -105,10 +107,11 @@ export function ContactSection() {
               )}
             </button>
           </div>
+          )}
         </div>
 
         {/* Directories Grid */}
-        <div className="grid grid-cols-2 gap-4 mt-6 md:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 mt-6 md:grid-cols-4">
           <a
             href={siteConfig.github}
             target="_blank"
@@ -144,47 +147,6 @@ export function ContactSection() {
               }`}
             >
               Auro-rium
-            </div>
-          </a>
-
-          <a
-            href={siteConfig.x}
-            target="_blank"
-            rel="noreferrer"
-            className={`p-4 border rounded-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md group ${
-              theme === "dark"
-                ? "border-zinc-800 hover:border-white bg-zinc-950/40 hover:bg-zinc-900 hover:shadow-black/10"
-                : "border-zinc-200 hover:border-black bg-zinc-50/20 hover:bg-zinc-50"
-            }`}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <svg 
-                viewBox="0 0 24 24" 
-                className={`w-4 h-4 fill-current transition-colors duration-300 ${
-                  theme === "dark" ? "text-zinc-500 group-hover:text-white" : "text-zinc-650 group-hover:text-black"
-                }`}
-              >
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-              </svg>
-              <ExternalLink 
-                className={`w-3 h-3 transition-colors duration-300 ${
-                  theme === "dark" ? "text-zinc-650 group-hover:text-zinc-400" : "text-zinc-400 group-hover:text-zinc-600"
-                }`} 
-              />
-            </div>
-            <div 
-              className={`text-[9px] font-mono tracking-wider transition-colors duration-300 ${
-                theme === "dark" ? "text-zinc-500" : "text-zinc-400"
-              }`}
-            >
-              X
-            </div>
-            <div 
-              className={`text-xs font-medium truncate mt-0.5 transition-colors duration-300 ${
-                theme === "dark" ? "text-white" : "text-black"
-              }`}
-            >
-              @auroriumnexus
             </div>
           </a>
 
