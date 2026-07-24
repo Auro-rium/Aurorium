@@ -48,7 +48,7 @@ export function ProjectsSection() {
               theme === "dark" ? "text-zinc-400" : "text-zinc-600"
             }`}
           >
-            Focusing on applied AI pipelines, data collector daemons, and fine-tuning.
+            Applied AI infrastructure, model training, evaluation, and agent security.
           </p>
         </div>
 
@@ -108,6 +108,16 @@ export function ProjectsSection() {
                 >
                   {project.description}
                 </p>
+
+                <div
+                  className={`mb-6 border-l-2 pl-3 text-[11px] leading-relaxed font-mono transition-colors duration-300 ${
+                    theme === "dark"
+                      ? "border-zinc-700 text-zinc-400"
+                      : "border-zinc-300 text-zinc-600"
+                  }`}
+                >
+                  {project.proof}
+                </div>
               </div>
 
               {/* Stack tags & links */}
@@ -127,8 +137,8 @@ export function ProjectsSection() {
                   ))}
                 </div>
 
-                <div 
-                  className={`pt-3 border-t transition-colors duration-300 ${
+                <div
+                  className={`pt-3 border-t flex flex-wrap items-center gap-x-4 gap-y-2 transition-colors duration-300 ${
                     theme === "dark" ? "border-zinc-900/80" : "border-zinc-150"
                   }`}
                 >
@@ -136,19 +146,36 @@ export function ProjectsSection() {
                     href={project.repoUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className={`inline-flex items-center justify-between w-full text-[11px] font-mono transition-all duration-300 ${
+                    className={`inline-flex items-center gap-1.5 text-[11px] font-mono transition-all duration-300 ${
                       theme === "dark"
                         ? "text-zinc-500 hover:text-white group-hover:text-zinc-300"
                         : "text-zinc-500 hover:text-black group-hover:text-zinc-700"
                     }`}
                   >
-                    <span>github.com/{project.repoUrl.split("github.com/")[1]}</span>
-                    <ExternalLink 
-                      className={`w-3.5 h-3.5 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 ${
+                    <span>GitHub</span>
+                    <ExternalLink
+                      className={`w-3 h-3 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 ${
                         theme === "dark" ? "text-zinc-600 group-hover:text-zinc-300" : "text-zinc-400 group-hover:text-zinc-700"
-                      }`} 
+                      }`}
                     />
                   </a>
+
+                  {project.links?.map((link) => (
+                    <a
+                      key={link.url}
+                      href={link.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={`inline-flex items-center gap-1.5 text-[11px] font-mono transition-all duration-300 ${
+                        theme === "dark"
+                          ? "text-zinc-400 hover:text-white"
+                          : "text-zinc-600 hover:text-black"
+                      }`}
+                    >
+                      <span>🤗 {link.label}</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  ))}
                 </div>
               </div>
             </div>

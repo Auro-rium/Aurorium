@@ -1,5 +1,5 @@
 import { siteConfig } from "../data/site";
-import { ArrowDown, Github, FileText } from "lucide-react";
+import { ArrowDown, Github, FileText, ExternalLink } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 
 export function Hero() {
@@ -85,6 +85,21 @@ export function Hero() {
             >
               <Github className="w-3.5 h-3.5" />
               GitHub
+            </a>
+
+            <a
+              href={siteConfig.huggingface}
+              target="_blank"
+              rel="noreferrer"
+              className={`inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-sm border transition-colors duration-300 ${
+                theme === "dark"
+                  ? "text-zinc-300 bg-zinc-900 hover:bg-zinc-800 border-zinc-800"
+                  : "text-zinc-700 bg-zinc-50 hover:bg-zinc-100 border-zinc-200"
+              }`}
+            >
+              <span aria-hidden="true">🤗</span>
+              Hugging Face
+              <ExternalLink className="w-3 h-3" />
             </a>
           </div>
         </div>

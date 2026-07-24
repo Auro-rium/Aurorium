@@ -38,7 +38,7 @@ export function ResumeSection() {
                 theme === "dark" ? "text-zinc-400" : "text-zinc-650"
               }`}
             >
-              Currently open to backend AI systems internships, part-time opportunities, and engineering real production-grade projects.
+              Open to applied AI engineering internships and high-ownership project work.
             </p>
           </div>
 
@@ -88,7 +88,7 @@ export function ResumeSection() {
                     theme === "dark" ? "text-white" : "text-black"
                   }`}
                 >
-                  Active Resume Document
+                  Resume PDF
                 </span>
               </div>
               <div className="flex items-center gap-4">

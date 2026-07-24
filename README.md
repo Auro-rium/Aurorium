@@ -1,20 +1,31 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Aurorium Portfolio
 
-# Run and deploy your AI Studio app
+The source for [auro-rium.github.io/Aurorium](https://auro-rium.github.io/Aurorium/), the applied AI engineering portfolio of Ishan Trivedi (Aurorium Nexus).
 
-This contains everything you need to run your app locally.
+## What it highlights
 
-View your app in AI Studio: https://ai.studio/apps/70ce7fcc-43fe-4d73-902d-70c3e1d0f9f3
+- IncidentOps Core and its deterministic evidence Collector
+- Agent Canary, an autonomous AI-agent red-team platform
+- AudioForge environmental audio training and published FSD50K benchmarks
+- AgentForge multi-turn tool-calling fine-tuning
+- LogSage QLoRA training and model publishing
 
-## Run Locally
+Project claims and proof points are sourced from the corresponding public repository documentation.
 
-**Prerequisites:**  Node.js
+## Local development
 
+```bash
+npm ci
+npm run dev
+```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Validation
+
+```bash
+npm run lint
+npm run build
+```
+
+## Deployment
+
+Pushes to `main` deploy the static Vite build to GitHub Pages through `.github/workflows/deploy.yml`. The Vite base path switches to `/Aurorium/` when the `GITHUB_PAGES` environment variable is enabled by the workflow.

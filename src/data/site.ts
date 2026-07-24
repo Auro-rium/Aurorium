@@ -23,7 +23,7 @@ export interface SiteConfig {
 
 export const siteConfig: SiteConfig = {
   name: "Aurorium Nexus",
-  role: "Applied AI Engineer & Systems Architect",
+  role: "Applied AI Engineer",
   location: "Bengaluru, India",
   email: "redacted",
   phone: "redacted",
@@ -34,9 +34,9 @@ export const siteConfig: SiteConfig = {
   leetcode: "https://leetcode.com/u/Gg2kJdIJ3w/",
   handle: "redacted",
   headline: "Aurorium Nexus",
-  subheadline: "Building practical AI systems from first principles.",
-  body: "I work across RAG, agents, fine-tuning, evaluation, and backend infrastructure, with a focus on systems that are reliable, inspectable, and useful beyond the demo.",
-  aboutText: "I am a computer science student interested in applied AI engineering, game theory, incentives, long-term technology, and systems that compound over time. I care about building AI systems that can be inspected, tested, deployed, and improved. My current focus is backend AI infrastructure: RAG, agents, fine-tuning, evaluation, and model-serving systems.",
+  subheadline: "I build applied AI systems.",
+  body: "My work spans RAG, agents, model fine-tuning, evaluation, and backend infrastructure. I focus on systems that are testable, inspectable, deployed, and honest about what has — and has not — been proven.",
+  aboutText: "I am focused on applied AI engineering: retrieval systems, agent workflows, model training, evaluation, and the backend infrastructure required to operate them. I care about explicit system boundaries, reproducible results, and engineering artifacts that remain useful beyond a demo.",
   operatingPrinciples: [
     { title: "Proof over claims", description: "Validated architectures and quantifiable benchmarks instead of vague descriptors." },
     { title: "Systems over vibes", description: "Relying on reproducible infrastructure, automated evaluations, and code-based observability." },

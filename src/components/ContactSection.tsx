@@ -42,7 +42,7 @@ export function ContactSection() {
               theme === "dark" ? "text-zinc-400" : "text-zinc-650"
             }`}
           >
-            Let's work together on non-trivial AI backend systems.
+            Let&apos;s work together on difficult applied AI systems.
           </p>
         </div>
 
@@ -65,7 +65,7 @@ export function ContactSection() {
                 theme === "dark" ? "text-zinc-400" : "text-zinc-650"
               }`}
             >
-              I am open to applied AI engineering internships, backend AI systems work, RAG/agent projects, and serious collaborations. Let's connect if you need developer resources to ship reliable backend pipelines.
+              I am open to applied AI engineering internships, backend AI systems work, and serious collaborations. Reach out if you are building agents, retrieval systems, model-training pipelines, or the infrastructure around them.
             </p>
           </div>
           
