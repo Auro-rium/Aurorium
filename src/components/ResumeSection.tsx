@@ -2,7 +2,7 @@ import { FileText, Download, Eye } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 
 // Use relative path so Vite's base path is prepended automatically
-const resumePdfUrl = `${import.meta.env.BASE_URL}assets/Ishan-Resume.pdf`;
+const resumePdfUrl = `${import.meta.env.BASE_URL}assets/Ishan-Trivedi-Resume-July-2026.pdf`;
 
 export function ResumeSection() {
   const { theme } = useTheme();
@@ -47,7 +47,7 @@ export function ResumeSection() {
             {/* Quick Download button */}
             <a
               href={resumePdfUrl}
-              download="Ishan-Resume.pdf"
+              download="Ishan-Trivedi-Resume.pdf"
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-mono rounded-sm transition-all shadow-sm cursor-pointer ${
                 theme === "dark"
                   ? "text-black bg-white hover:bg-zinc-200"
