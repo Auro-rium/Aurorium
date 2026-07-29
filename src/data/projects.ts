@@ -26,7 +26,13 @@ export const projects: Project[] = [
     label: "Autonomous AI agent red-team platform",
     description: "A LangGraph pipeline that targets HTTP-based AI agents, runs adversarial campaigns, evaluates findings with deterministic detectors and LLM judges, proposes defenses, retests them, and streams results to a React dashboard.",
     proof: "5-agent pipeline · 12 attack strategies · auditable finding lifecycle",
-    stack: ["LangGraph", "AWS Bedrock", "FastAPI", "React", "SQLite", "Docker"]
+    stack: ["LangGraph", "AWS Bedrock", "FastAPI", "React", "SQLite", "Docker"],
+    links: [
+      {
+        label: "Live explainer",
+        url: "https://agent-canary-explainer.vercel.app/"
+      }
+    ]
   },
   {
     name: "AudioForge",
@@ -52,7 +58,13 @@ export const projects: Project[] = [
     label: "Multi-turn tool-calling fine-tuning pipeline",
     description: "A LoRA/QLoRA training and evaluation pipeline targeting Gemma 4 12B's multi-turn tool-context reliability. It normalizes five public datasets into one schema and focuses evaluation on BFCL v4 multi-turn subsets.",
     proof: "5-source data pipeline · BFCL multi-turn evaluation target",
-    stack: ["Gemma 4", "TRL", "QLoRA", "BFCL", "AWS GPU", "Hugging Face"]
+    stack: ["Gemma 4", "TRL", "QLoRA", "BFCL", "AWS GPU", "Hugging Face"],
+    links: [
+      {
+        label: "Live explainer",
+        url: "https://agentforge-explainer.vercel.app/"
+      }
+    ]
   },
   {
     name: "OpsIncident Collector",
