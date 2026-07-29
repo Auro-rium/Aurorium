@@ -43,6 +43,10 @@ export const projects: Project[] = [
     stack: ["PyTorch", "Torchaudio", "AST", "LoRA", "Accelerate", "Hugging Face"],
     links: [
       {
+        label: "Live explainer",
+        url: "https://audioforge-explained.vercel.app/"
+      },
+      {
         label: "AST model",
         url: "https://huggingface.co/auro-rirum/audioforge-ast-fsd50k"
       },
