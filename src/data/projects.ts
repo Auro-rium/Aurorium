@@ -67,14 +67,6 @@ export const projects: Project[] = [
     ]
   },
   {
-    name: "OpsIncident Collector",
-    repoUrl: "https://github.com/Auro-rium/Ops-Incident-Collector",
-    label: "Deterministic engineering evidence pipeline",
-    description: "Discovers repository files under explicit policy, rejects unsafe inputs, redacts secrets, extracts bounded metadata, normalizes evidence, and syncs sanitized batches to IncidentOps Core. It remains deliberately separate from investigation and MCP.",
-    proof: "Policy-first collection · pre-sync redaction · versioned batch contract",
-    stack: ["Python", "Pydantic", "SQLite", "Docker", "systemd", "Prometheus"]
-  },
-  {
     name: "LogSage",
     repoUrl: "https://github.com/Auro-rium/logsage",
     label: "QLoRA fine-tuned log-analysis model",
@@ -82,6 +74,10 @@ export const projects: Project[] = [
     proof: "1,116 examples · best eval loss 0.789 · published adapter",
     stack: ["Qwen2.5", "Unsloth", "QLoRA", "Transformers", "AWS EC2", "Hugging Face"],
     links: [
+      {
+        label: "Live explainer",
+        url: "https://logsage-chronology.vercel.app/"
+      },
       {
         label: "Hugging Face model",
         url: "https://huggingface.co/auro-rirum/LogSage-Qwen2.5-7B-QLoRA-v0"
