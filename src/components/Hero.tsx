@@ -142,12 +142,26 @@ export function Hero() {
               300 problems
             </p>
             <p
-              className={`text-sm leading-relaxed mb-6 ${
+              className={`text-sm leading-relaxed mb-5 ${
                 theme === "dark" ? "text-zinc-400" : "text-zinc-600"
               }`}
             >
               Pattern-first practice to recognize and solve recurring DSA patterns faster.
             </p>
+
+            <a
+              href="https://dsa-sprint-30.vercel.app/"
+              target="_blank"
+              rel="noreferrer"
+              className={`mb-6 inline-flex items-center gap-2 text-xs font-semibold transition-colors ${
+                theme === "dark"
+                  ? "text-white hover:text-zinc-300"
+                  : "text-black hover:text-zinc-600"
+              }`}
+            >
+              Open 30-day sprint
+              <ExternalLink className="h-3.5 w-3.5" />
+            </a>
 
             <div
               className={`border-t pt-4 ${
