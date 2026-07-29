@@ -172,7 +172,7 @@ export function ProjectsSection() {
                           : "text-zinc-600 hover:text-black"
                       }`}
                     >
-                      <span>🤗 {link.label}</span>
+                      <span>{link.url.includes("huggingface.co") ? "🤗 " : ""}{link.label}</span>
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   ))}
