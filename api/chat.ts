@@ -158,6 +158,76 @@ function responseText(content: unknown) {
     .trim();
 }
 
+function portfolioFallback(question: string) {
+  const normalized = question.toLowerCase();
+  const relevantTerms = [
+    "ishan",
+    "portfolio",
+    "project",
+    "work",
+    "skill",
+    "stack",
+    "resume",
+    "intern",
+    "contract",
+    "availability",
+    "github",
+    "linkedin",
+    "hugging",
+    "leetcode",
+    "dsa",
+    "incidentops",
+    "canary",
+    "audioforge",
+    "agentforge",
+    "logsage",
+    "rag",
+    "agent",
+    "fine-tun",
+    "training",
+    "retrieval",
+  ];
+
+  if (!relevantTerms.some((term) => normalized.includes(term))) {
+    return "I can only help with questions about Ishan's portfolio, projects, skills, and availability.";
+  }
+
+  if (/(intern|contract|available|hire|hiring|opportunit)/.test(normalized)) {
+    return `${portfolioContext.identity.person} is open to internships and contract work, especially applied AI engineering, backend AI systems, agents, retrieval systems, model-training pipelines, and their infrastructure.`;
+  }
+
+  if (/(leetcode|dsa|sprint|300|pattern)/.test(normalized)) {
+    return `Ishan is currently doing a 30-day DSA sprint targeting 300 LeetCode problems in August 2026, with a focus on pattern-first practice. The tracker is available at ${portfolioContext.publicLinks.dsaSprint}.`;
+  }
+
+  if (/(resume|cv)/.test(normalized)) {
+    return `The latest public resume is available here: ${portfolioContext.publicLinks.resume}`;
+  }
+
+  if (/(contact|reach|linkedin|github|hugging face|huggingface|leetcode)/.test(normalized)) {
+    return `Public links: GitHub ${portfolioContext.publicLinks.github}, LinkedIn ${portfolioContext.publicLinks.linkedin}, Hugging Face ${portfolioContext.publicLinks.huggingFace}, and LeetCode ${portfolioContext.publicLinks.leetcode}. The portfolio does not publish an email address or phone number.`;
+  }
+
+  const matchedProject = portfolioContext.projects.find((project) =>
+    normalized.includes(project.name.toLowerCase()),
+  );
+  if (matchedProject) {
+    const links = matchedProject.links.map((link) => `${link.label}: ${link.url}`).join("; ");
+    return `${matchedProject.name}: ${matchedProject.summary} Proof: ${matchedProject.proof}. Stack: ${matchedProject.stack.join(", ")}.${links ? ` ${links}.` : ` Repository: ${matchedProject.repository}`}`;
+  }
+
+  if (/(strong|best|production|main|flagship)/.test(normalized)) {
+    const project = portfolioContext.projects.find((item) => item.name === "IncidentOps Core");
+    return `${project?.name} is the portfolio's clearest production-oriented system: ${project?.summary} Proof: ${project?.proof}. Repository: ${project?.repository}`;
+  }
+
+  if (/(stack|technolog|language|framework|what does he build|what does ishan do)/.test(normalized)) {
+    return `${portfolioContext.identity.person} works across ${portfolioContext.identity.focus.toLowerCase()} His project stack includes ${[...new Set(portfolioContext.projects.flatMap((project) => project.stack))].join(", ")}.`;
+  }
+
+  return "The portfolio provides information about Ishan's applied AI work, projects, skills, public links, and availability, but not that specific detail.";
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   setCorsHeaders(req, res);
 
@@ -206,8 +276,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).json({ answer });
   } catch (error) {
     console.error("Portfolio assistant request failed", error);
-    return res.status(502).json({
-      error: "The portfolio assistant is temporarily unavailable. Please try again shortly.",
-    });
+    const lastUserMessage = messages.at(-1)?.content ?? "";
+    return res.status(200).json({ answer: portfolioFallback(lastUserMessage) });
   }
 }
