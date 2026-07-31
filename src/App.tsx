@@ -5,6 +5,7 @@ import { ProjectsSection } from "./components/ProjectsSection";
 import { ResumeSection } from "./components/ResumeSection";
 import { ContactSection } from "./components/ContactSection";
 import { Footer } from "./components/Footer";
+import { PortfolioAssistant } from "./components/PortfolioAssistant";
 
 function AppContent() {
   const { theme } = useTheme();
@@ -34,6 +35,9 @@ function AppContent() {
 
       {/* Symmetrical footer */}
       <Footer />
+
+      {/* Portfolio-grounded assistant */}
+      <PortfolioAssistant />
     </div>
   );
 }
