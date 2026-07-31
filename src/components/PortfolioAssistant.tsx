@@ -1,23 +1,50 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { Bot, ExternalLink, LoaderCircle, MessageSquare, Send, X } from "lucide-react";
+import {
+  Bot,
+  ExternalLink,
+  LoaderCircle,
+  MessageSquare,
+  RotateCcw,
+  Send,
+  X,
+} from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 
 type ChatMessage = {
   role: "user" | "assistant";
   content: string;
+  followUps?: string[];
 };
 
 const API_URL =
   import.meta.env.VITE_PORTFOLIO_AGENT_API_URL ||
   "https://aurorium-portfolio-agent.vercel.app/api/chat";
 const GREETING =
-  "Hi — I’m Ishan’s portfolio assistant. Ask me about his projects, stack, experience, or availability.";
+  "Hey — welcome. I can help you find the useful part of this portfolio: the strongest system for your needs, the technical details behind it, or whether Ishan could be a good fit. What brings you here?";
 const SUGGESTIONS = [
-  "Which project best shows production AI work?",
-  "What is Ishan's strongest technical stack?",
-  "Is Ishan open to internships?",
+  "I’m hiring for an applied AI role",
+  "Show me the strongest production system",
+  "I want a technical deep dive",
 ];
+const STORAGE_KEY = "aurorium-portfolio-assistant-session";
+
+function loadSession(): ChatMessage[] {
+  try {
+    const saved = window.sessionStorage.getItem(STORAGE_KEY);
+    if (!saved) return [{ role: "assistant", content: GREETING }];
+    const parsed = JSON.parse(saved) as ChatMessage[];
+    if (!Array.isArray(parsed) || !parsed.length) return [{ role: "assistant", content: GREETING }];
+    return parsed.filter(
+      (message) =>
+        message &&
+        (message.role === "user" || message.role === "assistant") &&
+        typeof message.content === "string",
+    );
+  } catch {
+    return [{ role: "assistant", content: GREETING }];
+  }
+}
 
 export function PortfolioAssistant() {
   const { theme } = useTheme();
@@ -25,10 +52,12 @@ export function PortfolioAssistant() {
   const [showGreeting, setShowGreeting] = useState(false);
   const [input, setInput] = useState("");
   const [isSending, setIsSending] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: "assistant", content: GREETING },
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>(loadSession);
   const endRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-12)));
+  }, [messages]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setShowGreeting(true), 2500);
@@ -74,16 +103,23 @@ export function PortfolioAssistant() {
         body: JSON.stringify({
           messages: nextMessages
             .filter((message, index) => !(index === 0 && message.role === "assistant"))
-            .slice(-8),
+            .slice(-10),
         }),
       });
-      const data = (await response.json()) as { answer?: string; error?: string };
+      const data = (await response.json()) as {
+        answer?: string;
+        followUps?: string[];
+        error?: string;
+      };
 
       if (!response.ok || !data.answer) {
         throw new Error(data.error || "No answer returned.");
       }
 
-      setMessages((current) => [...current, { role: "assistant", content: data.answer! }]);
+      setMessages((current) => [
+        ...current,
+        { role: "assistant", content: data.answer!, followUps: data.followUps },
+      ]);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "The assistant is temporarily unavailable.";
@@ -102,6 +138,11 @@ export function PortfolioAssistant() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     void sendMessage(input);
+  };
+
+  const resetConversation = () => {
+    setMessages([{ role: "assistant", content: GREETING }]);
+    setInput("");
   };
 
   const shell =
@@ -130,11 +171,11 @@ export function PortfolioAssistant() {
               <Bot className="h-4 w-4" />
             </span>
             <span className="font-mono text-[10px] uppercase tracking-[0.16em]">
-              Portfolio assistant
+              Portfolio guide
             </span>
           </div>
           <p className={`pr-3 text-xs leading-relaxed ${subtle}`}>
-            Ask me about Ishan&apos;s work, stack, projects, or availability.
+            Not sure where to start? Tell me what you&apos;re looking for and I&apos;ll point you to the right work.
           </p>
           <button
             type="button"
@@ -164,18 +205,29 @@ export function PortfolioAssistant() {
               <div>
                 <h2 className="text-sm font-semibold">Ask about Ishan</h2>
                 <p className={`font-mono text-[9px] uppercase tracking-[0.14em] ${subtle}`}>
-                  Portfolio-grounded only
+                  I’ll point you in the right direction
                 </p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setIsOpen(false)}
-              className={`p-1.5 transition-colors ${subtle}`}
-              aria-label="Close portfolio assistant"
-            >
-              <X className="h-4 w-4" />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={resetConversation}
+                className={`p-1.5 transition-colors ${subtle}`}
+                aria-label="Start a new assistant conversation"
+                title="New conversation"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className={`p-1.5 transition-colors ${subtle}`}
+                aria-label="Close portfolio assistant"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
           </header>
 
           <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4" aria-live="polite">
@@ -220,29 +272,35 @@ export function PortfolioAssistant() {
               </div>
             ))}
 
-            {messages.length === 1 && (
-              <div className="space-y-2">
-                {SUGGESTIONS.map((suggestion) => (
-                  <button
-                    key={suggestion}
-                    type="button"
-                    onClick={() => void sendMessage(suggestion)}
-                    className={`block w-full border px-3 py-2 text-left text-[11px] transition-colors ${
-                      theme === "dark"
-                        ? "border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-white"
-                        : "border-zinc-200 text-zinc-600 hover:border-zinc-400 hover:text-black"
-                    }`}
-                  >
-                    {suggestion}
-                  </button>
-                ))}
-              </div>
+            {messages.map((message, index) =>
+              message.role === "assistant" &&
+              (message.followUps || (index === 0 && messages.length === 1 ? SUGGESTIONS : undefined)) ? (
+                <div key={`follow-ups-${index}`} className="space-y-2 pl-1">
+                  <p className={`font-mono text-[9px] uppercase tracking-[0.12em] ${subtle}`}>
+                    {index === 0 ? "Quick paths" : "Where should we go next?"}
+                  </p>
+                  {(message.followUps ?? SUGGESTIONS).slice(0, 3).map((suggestion) => (
+                    <button
+                      key={suggestion}
+                      type="button"
+                      onClick={() => void sendMessage(suggestion)}
+                      className={`block w-full border px-3 py-2 text-left text-[11px] transition-colors ${
+                        theme === "dark"
+                          ? "border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-white"
+                          : "border-zinc-200 text-zinc-600 hover:border-zinc-400 hover:text-black"
+                      }`}
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+              ) : null,
             )}
 
             {isSending && (
               <div className={`flex items-center gap-2 text-[11px] ${subtle}`}>
                 <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
-                Checking the portfolio…
+                Looking across the work…
               </div>
             )}
             <div ref={endRef} />
@@ -284,7 +342,7 @@ export function PortfolioAssistant() {
               </button>
             </div>
             <p className={`mt-2 text-center font-mono text-[8px] uppercase tracking-[0.12em] ${subtle}`}>
-              Answers only from this portfolio
+              Grounded in the work shown here
             </p>
           </form>
         </section>
