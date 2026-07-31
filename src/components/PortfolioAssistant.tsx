@@ -1,0 +1,304 @@
+import { FormEvent, useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import { Bot, ExternalLink, LoaderCircle, MessageSquare, Send, X } from "lucide-react";
+import { useTheme } from "../context/ThemeContext";
+
+type ChatMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
+
+const API_URL =
+  import.meta.env.VITE_PORTFOLIO_AGENT_API_URL ||
+  "https://aurorium-portfolio-agent.vercel.app/api/chat";
+const GREETING =
+  "Hi — I’m Ishan’s portfolio assistant. Ask me about his projects, stack, experience, or availability.";
+const SUGGESTIONS = [
+  "Which project best shows production AI work?",
+  "What is Ishan's strongest technical stack?",
+  "Is Ishan open to internships?",
+];
+
+export function PortfolioAssistant() {
+  const { theme } = useTheme();
+  const [isOpen, setIsOpen] = useState(false);
+  const [showGreeting, setShowGreeting] = useState(false);
+  const [input, setInput] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    { role: "assistant", content: GREETING },
+  ]);
+  const endRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setShowGreeting(true), 2500);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isOpen]);
+
+  const openChat = () => {
+    setIsOpen(true);
+    setShowGreeting(false);
+  };
+
+  const sendMessage = async (content: string) => {
+    const trimmed = content.trim();
+    if (!trimmed || isSending) return;
+
+    const userMessage: ChatMessage = { role: "user", content: trimmed };
+    const nextMessages = [...messages, userMessage];
+    setMessages(nextMessages);
+    setInput("");
+    setIsSending(true);
+
+    if (!API_URL) {
+      setMessages((current) => [
+        ...current,
+        {
+          role: "assistant",
+          content:
+            "The assistant is being configured. You can still explore the projects and public links on this page.",
+        },
+      ]);
+      setIsSending(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: nextMessages
+            .filter((message, index) => !(index === 0 && message.role === "assistant"))
+            .slice(-8),
+        }),
+      });
+      const data = (await response.json()) as { answer?: string; error?: string };
+
+      if (!response.ok || !data.answer) {
+        throw new Error(data.error || "No answer returned.");
+      }
+
+      setMessages((current) => [...current, { role: "assistant", content: data.answer! }]);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "The assistant is temporarily unavailable.";
+      setMessages((current) => [
+        ...current,
+        {
+          role: "assistant",
+          content: `${message} You can use the GitHub, LinkedIn, and project links on this page in the meantime.`,
+        },
+      ]);
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    void sendMessage(input);
+  };
+
+  const shell =
+    theme === "dark"
+      ? "border-zinc-800 bg-zinc-950 text-white shadow-black/50"
+      : "border-zinc-200 bg-white text-black shadow-zinc-400/25";
+  const subtle = theme === "dark" ? "text-zinc-400" : "text-zinc-600";
+
+  return (
+    <div className="fixed bottom-4 right-4 z-[70] sm:bottom-6 sm:right-6 print:hidden">
+      {showGreeting && !isOpen && (
+        <div
+          className={`absolute bottom-16 right-0 w-[min(19rem,calc(100vw-2rem))] border p-4 shadow-xl ${shell}`}
+          role="status"
+        >
+          <button
+            type="button"
+            onClick={() => setShowGreeting(false)}
+            className={`absolute right-2 top-2 p-1 ${subtle}`}
+            aria-label="Dismiss assistant greeting"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+          <div className="mb-2 flex items-center gap-2">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500">
+              <Bot className="h-4 w-4" />
+            </span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.16em]">
+              Portfolio assistant
+            </span>
+          </div>
+          <p className={`pr-3 text-xs leading-relaxed ${subtle}`}>
+            Ask me about Ishan&apos;s work, stack, projects, or availability.
+          </p>
+          <button
+            type="button"
+            onClick={openChat}
+            className="mt-3 text-xs font-semibold underline underline-offset-4"
+          >
+            Start a conversation
+          </button>
+        </div>
+      )}
+
+      {isOpen && (
+        <section
+          className={`absolute bottom-16 right-0 flex h-[min(36rem,calc(100vh-7rem))] w-[min(24rem,calc(100vw-2rem))] flex-col overflow-hidden border shadow-2xl ${shell}`}
+          aria-label="Ishan's portfolio assistant"
+        >
+          <header
+            className={`flex items-center justify-between border-b px-4 py-3 ${
+              theme === "dark" ? "border-zinc-800" : "border-zinc-200"
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <span className="relative flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500">
+                <Bot className="h-4 w-4" />
+                <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-current bg-emerald-500" />
+              </span>
+              <div>
+                <h2 className="text-sm font-semibold">Ask about Ishan</h2>
+                <p className={`font-mono text-[9px] uppercase tracking-[0.14em] ${subtle}`}>
+                  Portfolio-grounded only
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              className={`p-1.5 transition-colors ${subtle}`}
+              aria-label="Close portfolio assistant"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </header>
+
+          <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4" aria-live="polite">
+            {messages.map((message, index) => (
+              <div
+                key={`${message.role}-${index}`}
+                className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+              >
+                <div
+                  className={`max-w-[88%] rounded-sm px-3 py-2.5 text-xs leading-relaxed ${
+                    message.role === "user"
+                      ? theme === "dark"
+                        ? "bg-white text-black"
+                        : "bg-black text-white"
+                      : theme === "dark"
+                        ? "border border-zinc-800 bg-zinc-900 text-zinc-200"
+                        : "border border-zinc-200 bg-zinc-50 text-zinc-700"
+                  }`}
+                >
+                  <ReactMarkdown
+                    components={{
+                      a: ({ href, children }) => (
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 underline underline-offset-2"
+                        >
+                          {children}
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      ),
+                      p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                      ul: ({ children }) => (
+                        <ul className="my-2 list-disc space-y-1 pl-4">{children}</ul>
+                      ),
+                    }}
+                  >
+                    {message.content}
+                  </ReactMarkdown>
+                </div>
+              </div>
+            ))}
+
+            {messages.length === 1 && (
+              <div className="space-y-2">
+                {SUGGESTIONS.map((suggestion) => (
+                  <button
+                    key={suggestion}
+                    type="button"
+                    onClick={() => void sendMessage(suggestion)}
+                    className={`block w-full border px-3 py-2 text-left text-[11px] transition-colors ${
+                      theme === "dark"
+                        ? "border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-white"
+                        : "border-zinc-200 text-zinc-600 hover:border-zinc-400 hover:text-black"
+                    }`}
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {isSending && (
+              <div className={`flex items-center gap-2 text-[11px] ${subtle}`}>
+                <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
+                Checking the portfolio…
+              </div>
+            )}
+            <div ref={endRef} />
+          </div>
+
+          <form
+            onSubmit={handleSubmit}
+            className={`border-t p-3 ${theme === "dark" ? "border-zinc-800" : "border-zinc-200"}`}
+          >
+            <div
+              className={`flex items-end gap-2 border px-3 py-2 ${
+                theme === "dark"
+                  ? "border-zinc-800 bg-black focus-within:border-zinc-600"
+                  : "border-zinc-200 bg-zinc-50 focus-within:border-zinc-400"
+              }`}
+            >
+              <textarea
+                value={input}
+                onChange={(event) => setInput(event.target.value.slice(0, 800))}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" && !event.shiftKey) {
+                    event.preventDefault();
+                    event.currentTarget.form?.requestSubmit();
+                  }
+                }}
+                rows={1}
+                placeholder="Ask about a project or skill…"
+                className="max-h-24 min-h-6 flex-1 resize-none bg-transparent text-xs outline-none placeholder:text-zinc-500"
+                disabled={isSending}
+                aria-label="Message for portfolio assistant"
+              />
+              <button
+                type="submit"
+                disabled={isSending || !input.trim()}
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-emerald-500 text-black transition-opacity disabled:opacity-35"
+                aria-label="Send message"
+              >
+                <Send className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <p className={`mt-2 text-center font-mono text-[8px] uppercase tracking-[0.12em] ${subtle}`}>
+              Answers only from this portfolio
+            </p>
+          </form>
+        </section>
+      )}
+
+      <button
+        type="button"
+        onClick={() => (isOpen ? setIsOpen(false) : openChat())}
+        className={`flex h-12 w-12 items-center justify-center rounded-full border shadow-lg transition-transform hover:-translate-y-0.5 ${shell}`}
+        aria-label={isOpen ? "Close portfolio assistant" : "Open portfolio assistant"}
+        aria-expanded={isOpen}
+      >
+        {isOpen ? <X className="h-5 w-5" /> : <MessageSquare className="h-5 w-5" />}
+      </button>
+    </div>
+  );
+}
