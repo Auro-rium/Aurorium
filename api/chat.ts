@@ -235,7 +235,13 @@ function portfolioFallback(question: string) {
     "resume",
     "intern",
     "contract",
+    "hire",
+    "hiring",
+    "recruit",
     "availability",
+    "technical",
+    "deep dive",
+    "production",
     "github",
     "linkedin",
     "hugging",
@@ -257,8 +263,16 @@ function portfolioFallback(question: string) {
     return "I can only help with questions about Ishan's portfolio, projects, skills, and availability.";
   }
 
-  if (/(intern|contract|available|hire|hiring|opportunit)/.test(normalized)) {
-    return `${portfolioContext.identity.person} is open to internships and contract work, especially applied AI engineering, backend AI systems, agents, retrieval systems, model-training pipelines, and their infrastructure.`;
+  const isHiring = /(intern|contract|available|hire|hiring|opportunit|recruit)/.test(normalized);
+  const asksForStartingPoint = /(project|look|start|strong|best|production|first)/.test(normalized);
+
+  if (isHiring && asksForStartingPoint) {
+    const project = portfolioContext.projects.find((item) => item.name === "IncidentOps Core");
+    return `If you're evaluating Ishan for an applied AI role, start with IncidentOps Core. It is the clearest production-oriented system in the portfolio: ${project?.summary} The evidence listed is ${project?.proof}.`;
+  }
+
+  if (isHiring) {
+    return `If you're hiring for applied AI work, Ishan is open to internships and contract work. His strongest overlap is backend AI systems, agents, retrieval, model-training pipelines, and the infrastructure around them.`;
   }
 
   if (/(leetcode|dsa|sprint|300|pattern)/.test(normalized)) {
@@ -284,6 +298,11 @@ function portfolioFallback(question: string) {
   if (/(strong|best|production|main|flagship)/.test(normalized)) {
     const project = portfolioContext.projects.find((item) => item.name === "IncidentOps Core");
     return `${project?.name} is the portfolio's clearest production-oriented system: ${project?.summary} Proof: ${project?.proof}. Repository: ${project?.repository}`;
+  }
+
+  if (/(technical|deep dive|architecture|how does|how do)/.test(normalized)) {
+    const project = portfolioContext.projects.find((item) => item.name === "IncidentOps Core");
+    return `For a technical starting point, look at IncidentOps Core. It combines normalized evidence, cited retrieval, investigation workflows, evaluation, metrics, and MCP interfaces; the listed proof is ${project?.proof}.`;
   }
 
   if (/(stack|technolog|language|framework|what does he build|what does ishan do)/.test(normalized)) {
