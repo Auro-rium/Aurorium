@@ -14,7 +14,6 @@ import { useTheme } from "../context/ThemeContext";
 type ChatMessage = {
   role: "user" | "assistant";
   content: string;
-  followUps?: string[];
 };
 
 const API_URL =
@@ -108,7 +107,6 @@ export function PortfolioAssistant() {
       });
       const data = (await response.json()) as {
         answer?: string;
-        followUps?: string[];
         error?: string;
       };
 
@@ -116,18 +114,14 @@ export function PortfolioAssistant() {
         throw new Error(data.error || "No answer returned.");
       }
 
-      setMessages((current) => [
-        ...current,
-        { role: "assistant", content: data.answer!, followUps: data.followUps },
-      ]);
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "The assistant is temporarily unavailable.";
+      setMessages((current) => [...current, { role: "assistant", content: data.answer! }]);
+    } catch {
       setMessages((current) => [
         ...current,
         {
           role: "assistant",
-          content: `${message} You can use the GitHub, LinkedIn, and project links on this page in the meantime.`,
+          content:
+            "I’m temporarily offline, so I won’t substitute a scripted answer. The project cards, GitHub, LinkedIn, and résumé links on this page still work.",
         },
       ]);
     } finally {
@@ -272,35 +266,32 @@ export function PortfolioAssistant() {
               </div>
             ))}
 
-            {messages.map((message, index) =>
-              message.role === "assistant" &&
-              (message.followUps || (index === 0 && messages.length === 1 ? SUGGESTIONS : undefined)) ? (
-                <div key={`follow-ups-${index}`} className="space-y-2 pl-1">
-                  <p className={`font-mono text-[9px] uppercase tracking-[0.12em] ${subtle}`}>
-                    {index === 0 ? "Quick paths" : "Where should we go next?"}
-                  </p>
-                  {(message.followUps ?? SUGGESTIONS).slice(0, 3).map((suggestion) => (
-                    <button
-                      key={suggestion}
-                      type="button"
-                      onClick={() => void sendMessage(suggestion)}
-                      className={`block w-full border px-3 py-2 text-left text-[11px] transition-colors ${
-                        theme === "dark"
-                          ? "border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-white"
-                          : "border-zinc-200 text-zinc-600 hover:border-zinc-400 hover:text-black"
-                      }`}
-                    >
-                      {suggestion}
-                    </button>
-                  ))}
-                </div>
-              ) : null,
+            {messages.length === 1 && (
+              <div className="space-y-2 pl-1">
+                <p className={`font-mono text-[9px] uppercase tracking-[0.12em] ${subtle}`}>
+                  Quick paths
+                </p>
+                {SUGGESTIONS.map((suggestion) => (
+                  <button
+                    key={suggestion}
+                    type="button"
+                    onClick={() => void sendMessage(suggestion)}
+                    className={`block w-full border px-3 py-2 text-left text-[11px] transition-colors ${
+                      theme === "dark"
+                        ? "border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-white"
+                        : "border-zinc-200 text-zinc-600 hover:border-zinc-400 hover:text-black"
+                    }`}
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
             )}
 
             {isSending && (
               <div className={`flex items-center gap-2 text-[11px] ${subtle}`}>
                 <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
-                Looking across the work…
+                Checking the portfolio evidence…
               </div>
             )}
             <div ref={endRef} />
@@ -342,7 +333,7 @@ export function PortfolioAssistant() {
               </button>
             </div>
             <p className={`mt-2 text-center font-mono text-[8px] uppercase tracking-[0.12em] ${subtle}`}>
-              Grounded in the work shown here
+              Live model · portfolio tools only
             </p>
           </form>
         </section>
