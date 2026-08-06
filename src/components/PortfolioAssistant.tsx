@@ -20,13 +20,17 @@ const API_URL =
   import.meta.env.VITE_PORTFOLIO_AGENT_API_URL ||
   "https://aurorium-portfolio-agent.vercel.app/api/chat";
 const GREETING =
-  "Welcome. I can help you navigate the work here: pick the strongest system for your needs, explain a technical project, or point you to the right proof. What would you like to explore?";
+  "The portfolio assistant is currently offline. You can still explore the work, proof links, GitHub, LinkedIn, and résumé on this page.";
 const SUGGESTIONS = [
   "I’m hiring for an applied AI role",
   "Show me the strongest production system",
   "I want a technical deep dive",
 ];
 const STORAGE_KEY = "aurorium-portfolio-assistant-session";
+// Keep the public state honest until the server-side agent is verified online.
+const ASSISTANT_ONLINE = false;
+const OFFLINE_MESSAGE =
+  "The portfolio assistant is currently offline. You can still explore the projects, GitHub, LinkedIn, and résumé links on this page.";
 
 function loadSession(): ChatMessage[] {
   try {
@@ -169,15 +173,8 @@ export function PortfolioAssistant() {
             </span>
           </div>
           <p className={`pr-3 text-xs leading-relaxed ${subtle}`}>
-            Not sure where to start? Tell me what you&apos;re looking for and I&apos;ll point you to the right work.
+            The assistant is currently offline. You can still explore the projects, GitHub, LinkedIn, and résumé links on this page.
           </p>
-          <button
-            type="button"
-            onClick={openChat}
-            className="mt-3 text-xs font-semibold underline underline-offset-4"
-          >
-            Start a conversation
-          </button>
         </div>
       )}
 
@@ -194,12 +191,12 @@ export function PortfolioAssistant() {
             <div className="flex items-center gap-3">
               <span className="relative flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500">
                 <Bot className="h-4 w-4" />
-                <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-current bg-emerald-500" />
+                <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-current bg-zinc-500" />
               </span>
               <div>
                 <h2 className="text-sm font-semibold">Portfolio assistant</h2>
                 <p className={`font-mono text-[9px] uppercase tracking-[0.14em] ${subtle}`}>
-                  Evidence from this site only
+                  {ASSISTANT_ONLINE ? "Evidence from this site only" : "Assistant offline"}
                 </p>
               </div>
             </div>
@@ -266,7 +263,20 @@ export function PortfolioAssistant() {
               </div>
             ))}
 
-            {messages.length === 1 && (
+            {!ASSISTANT_ONLINE && (
+              <div
+                className={`border px-3 py-2.5 text-xs leading-relaxed ${
+                  theme === "dark"
+                    ? "border-zinc-800 bg-zinc-900 text-zinc-300"
+                    : "border-zinc-200 bg-zinc-50 text-zinc-600"
+                }`}
+                role="status"
+              >
+                {OFFLINE_MESSAGE}
+              </div>
+            )}
+
+            {ASSISTANT_ONLINE && messages.length === 1 && (
               <div className="space-y-2 pl-1">
                 <p className={`font-mono text-[9px] uppercase tracking-[0.12em] ${subtle}`}>
                   Quick paths
@@ -318,14 +328,14 @@ export function PortfolioAssistant() {
                   }
                 }}
                 rows={1}
-                placeholder="Ask about a project or skill…"
+                placeholder={ASSISTANT_ONLINE ? "Ask about a project or skill…" : "Assistant is offline"}
                 className="max-h-24 min-h-6 flex-1 resize-none bg-transparent text-xs outline-none placeholder:text-zinc-500"
-                disabled={isSending}
+                disabled={isSending || !ASSISTANT_ONLINE}
                 aria-label="Message for portfolio assistant"
               />
               <button
                 type="submit"
-                disabled={isSending || !input.trim()}
+                disabled={isSending || !input.trim() || !ASSISTANT_ONLINE}
                 className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm bg-emerald-500 text-black transition-opacity disabled:opacity-35"
                 aria-label="Send message"
               >
@@ -333,7 +343,7 @@ export function PortfolioAssistant() {
               </button>
             </div>
             <p className={`mt-2 text-center font-mono text-[8px] uppercase tracking-[0.12em] ${subtle}`}>
-              Portfolio-only conversations
+              {ASSISTANT_ONLINE ? "Portfolio-only conversations" : "Unavailable until the assistant is back online"}
             </p>
           </form>
         </section>
