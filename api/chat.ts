@@ -34,7 +34,7 @@ const portfolioContext = {
     interests:
       "Applied AI engineering internships, backend AI systems work, and serious collaborations involving agents, retrieval systems, model-training pipelines, or their infrastructure.",
     currentFocus:
-      "A 30-day DSA sprint targeting 300 LeetCode problems in August 2026, with pattern-first practice.",
+      "A DSA sprint running from August through September 2026, focused on building pattern recognition and solving recurring problem types reliably.",
   },
   projects: projects.map((project) => ({
     name: project.name,
