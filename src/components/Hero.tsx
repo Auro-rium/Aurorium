@@ -132,7 +132,7 @@ export function Hero() {
                 theme === "dark" ? "text-zinc-500" : "text-zinc-500"
               }`}
             >
-              August ’26 goal
+              August–September ’26
             </p>
             <p
               className={`text-3xl font-semibold tracking-tight mb-3 ${
@@ -146,7 +146,7 @@ export function Hero() {
                 theme === "dark" ? "text-zinc-400" : "text-zinc-600"
               }`}
             >
-              Pattern-first practice to recognize and solve recurring DSA patterns faster.
+              A focused DSA run: build pattern recognition first, then turn it into faster, reliable problem solving.
             </p>
 
             <a
@@ -159,7 +159,7 @@ export function Hero() {
                   : "text-black hover:text-zinc-600"
               }`}
             >
-              Open 30-day sprint
+              Open DSA sprint
               <ExternalLink className="h-3.5 w-3.5" />
             </a>
 
