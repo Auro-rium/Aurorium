@@ -20,7 +20,7 @@ const API_URL =
   import.meta.env.VITE_PORTFOLIO_AGENT_API_URL ||
   "https://aurorium-portfolio-agent.vercel.app/api/chat";
 const GREETING =
-  "Hey — welcome. I can help you find the useful part of this portfolio: the strongest system for your needs, the technical details behind it, or whether Ishan could be a good fit. What brings you here?";
+  "Welcome. I can help you navigate the work here: pick the strongest system for your needs, explain a technical project, or point you to the right proof. What would you like to explore?";
 const SUGGESTIONS = [
   "I’m hiring for an applied AI role",
   "Show me the strongest production system",
@@ -184,7 +184,7 @@ export function PortfolioAssistant() {
       {isOpen && (
         <section
           className={`absolute bottom-16 right-0 flex h-[min(36rem,calc(100vh-7rem))] w-[min(24rem,calc(100vw-2rem))] flex-col overflow-hidden border shadow-2xl ${shell}`}
-          aria-label="Ishan's portfolio assistant"
+          aria-label="Portfolio assistant"
         >
           <header
             className={`flex items-center justify-between border-b px-4 py-3 ${
@@ -197,9 +197,9 @@ export function PortfolioAssistant() {
                 <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-current bg-emerald-500" />
               </span>
               <div>
-                <h2 className="text-sm font-semibold">Ask about Ishan</h2>
+                <h2 className="text-sm font-semibold">Portfolio assistant</h2>
                 <p className={`font-mono text-[9px] uppercase tracking-[0.14em] ${subtle}`}>
-                  I’ll point you in the right direction
+                  Evidence from this site only
                 </p>
               </div>
             </div>
@@ -333,7 +333,7 @@ export function PortfolioAssistant() {
               </button>
             </div>
             <p className={`mt-2 text-center font-mono text-[8px] uppercase tracking-[0.12em] ${subtle}`}>
-              Live model · portfolio tools only
+              Portfolio-only conversations
             </p>
           </form>
         </section>
