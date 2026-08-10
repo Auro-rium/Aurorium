@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "build": "rm -rf dist && mkdir -p dist && cp index.html dist/index.html && cp -R public/. dist/",
+    "build": "rm -rf dist && mkdir -p dist/blog && cp index.html dist/index.html && cp blog/applied-ai.html dist/blog/applied-ai.html && cp -R public/. dist/",
     "lint": "node --check scripts/validate-html.mjs"
   }
 }

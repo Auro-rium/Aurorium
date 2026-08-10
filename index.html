@@ -54,6 +54,11 @@
       .contribution-chart { display:block; width:100%; min-height:116px; object-fit:contain; object-position:left center; border-radius:8px; }
       .github-note { margin:20px 0 0; color:var(--muted); font-size:14px; }
       .leetcode-chart { display:block; width:100%; min-height:180px; object-fit:contain; object-position:left center; border-radius:8px; background:#111; }
+      .blog-list { width:min(100%, 760px); margin:auto; display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+      .blog-card { min-height:176px; padding:23px; border:1px solid var(--line); border-radius:18px; background:var(--panel-2); display:flex; flex-direction:column; justify-content:space-between; }
+      .blog-card h3 { margin:0; font-size:22px; letter-spacing:-.04em; }
+      .blog-card p { margin:9px 0 0; color:var(--muted); font-size:15px; }
+      .blog-card a { margin-top:21px; color:#eee; font-size:14px; font-weight:700; }
       .empty-state { padding:34px 12px 30px; color:var(--muted); text-align:center; font-size:15px; }
       .contact { padding-bottom:100px; text-align:center; }
       .contact p { max-width:560px; margin:0 auto 26px; color:var(--muted); }
@@ -64,7 +69,7 @@
         .top { padding-top:20px; }.nav { gap:1px; padding:6px; }.nav a { width:36px; height:36px; font-size:16px; }.nav i { height:21px; margin:0; }
         .hero { min-height:760px; justify-content:flex-start; padding:90px 0 82px; }.avatar { width:142px; height:142px; }
         h1 { margin-top:53px; font-size:42px; }.intro { margin-top:42px; font-size:19px; }.actions { margin-top:50px; gap:14px; }.button { min-width:146px; padding:15px 16px; font-size:16px; }
-        section { padding:62px 0; }.section-title { margin-bottom:34px; }.project { grid-template-columns:auto 1fr; gap:12px; }.project-links { grid-column:2; }.project h3 { font-size:20px; }.project p { font-size:14px; }.github-card { padding:20px; }.github-head { align-items:flex-start; flex-direction:column; gap:3px; }.contribution-chart { min-height:86px; }.leetcode-chart { min-height:150px; }
+        section { padding:62px 0; }.section-title { margin-bottom:34px; }.project { grid-template-columns:auto 1fr; gap:12px; }.project-links { grid-column:2; }.project h3 { font-size:20px; }.project p { font-size:14px; }.github-card { padding:20px; }.github-head { align-items:flex-start; flex-direction:column; gap:3px; }.contribution-chart { min-height:86px; }.leetcode-chart { min-height:150px; }.blog-list { grid-template-columns:1fr; }.blog-card { min-height:0; padding:21px; }
       }
     </style>
   </head>
@@ -120,6 +125,19 @@
             <a href="https://leetcode.com/u/Gg2kJdIJ3w/" target="_blank" rel="noopener" aria-label="Open Ishan's LeetCode profile"><img class="leetcode-chart" src="https://leetcard.jacoblin.cool/Gg2kJdIJ3w?theme=dark&font=Inter&ext=heatmap" alt="Gg2kJdIJ3w's live LeetCode activity heatmap" loading="lazy" /></a>
             <p class="github-note">DSA sprint — August–September 2026. Data comes from the public LeetCode profile.</p>
           </div>
+        </div>
+      </section>
+
+      <section id="blog">
+        <h2 class="section-title">Blog</h2>
+        <div class="blog-list">
+          <article class="blog-card">
+            <div><h3>Backend systems</h3><p>Will add soon.</p></div>
+          </article>
+          <article class="blog-card">
+            <div><h3>Applied AI</h3><p>Notes on agent systems, skills, RAG, and the engineering behind them.</p></div>
+            <a href="blog/applied-ai.html">Read notes ↗</a>
+          </article>
         </div>
       </section>
 
