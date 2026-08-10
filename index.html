@@ -51,15 +51,8 @@
       .github-head h3 { margin:0; font-size:20px; letter-spacing:-.035em; }
       .github-head a { color:#d9d9d9; font-size:14px; font-weight:700; }
       .github-copy { margin:7px 0 22px; color:var(--muted); font-size:14px; }
-      .contribution-grid { display:grid; grid-template-columns:repeat(18,1fr); gap:7px; min-height:146px; }
-      .contribution { aspect-ratio:1; min-width:0; border-radius:5px; background:#242326; transition:transform .16s ease; }
-      .contribution:hover { transform:scale(1.08); }
-      .contribution.level-1 { background:#155426; }.contribution.level-2 { background:#197230; }.contribution.level-3 { background:#28a643; }.contribution.level-4 { background:#43db61; }
-      .github-meta { display:flex; flex-wrap:wrap; gap:8px 16px; margin:22px 0 0; color:#aaa; font-size:14px; }
-      .github-meta strong { color:#f3f3f3; }
-      .repo-activity { margin:24px 0 0; padding:0; list-style:none; border-top:1px solid #2e2e2e; }
-      .repo-activity li { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 0; border-bottom:1px solid #2e2e2e; }
-      .repo-activity a { font-size:15px; font-weight:750; }.repo-activity span { color:#999; font-size:13px; white-space:nowrap; }
+      .contribution-chart { display:block; width:100%; min-height:116px; object-fit:contain; object-position:left center; border-radius:8px; }
+      .github-note { margin:20px 0 0; color:var(--muted); font-size:14px; }
       .empty-state { padding:34px 12px 30px; color:var(--muted); text-align:center; font-size:15px; }
       .contact { padding-bottom:100px; text-align:center; }
       .contact p { max-width:560px; margin:0 auto 26px; color:var(--muted); }
@@ -70,7 +63,7 @@
         .top { padding-top:20px; }.nav { gap:1px; padding:6px; }.nav a { width:36px; height:36px; font-size:16px; }.nav i { height:21px; margin:0; }
         .hero { min-height:760px; justify-content:flex-start; padding:90px 0 82px; }.avatar { width:142px; height:142px; }
         h1 { margin-top:53px; font-size:42px; }.intro { margin-top:42px; font-size:19px; }.actions { margin-top:50px; gap:14px; }.button { min-width:146px; padding:15px 16px; font-size:16px; }
-        section { padding:62px 0; }.section-title { margin-bottom:34px; }.project { grid-template-columns:auto 1fr; gap:12px; }.project-links { grid-column:2; }.project h3 { font-size:20px; }.project p { font-size:14px; }.github-card { padding:20px; }.contribution-grid { gap:5px; }.github-head { align-items:flex-start; flex-direction:column; gap:3px; }.repo-activity li { align-items:flex-start; flex-direction:column; gap:3px; }
+        section { padding:62px 0; }.section-title { margin-bottom:34px; }.project { grid-template-columns:auto 1fr; gap:12px; }.project-links { grid-column:2; }.project h3 { font-size:20px; }.project p { font-size:14px; }.github-card { padding:20px; }.github-head { align-items:flex-start; flex-direction:column; gap:3px; }.contribution-chart { min-height:86px; }
       }
     </style>
   </head>
@@ -105,14 +98,13 @@
       </section>
 
       <section id="github">
-        <h2 class="section-title">GitHub timeline</h2>
+        <h2 class="section-title">GitHub grind</h2>
         <div class="github">
           <div class="github-card">
-            <div class="github-head"><h3>Recent public activity</h3><a href="https://github.com/Auro-rium" target="_blank" rel="noopener">github.com/Auro-rium ↗</a></div>
-            <p class="github-copy" id="github-status">Loading activity from GitHub…</p>
-            <div class="contribution-grid" id="contribution-grid" aria-label="Recent public GitHub activity"></div>
-            <div class="github-meta" id="github-meta" aria-live="polite"></div>
-            <ol class="repo-activity" id="repo-activity" aria-live="polite"></ol>
+            <div class="github-head"><h3>Public contributions</h3><a href="https://github.com/Auro-rium" target="_blank" rel="noopener">github.com/Auro-rium ↗</a></div>
+            <p class="github-copy">The actual public contribution activity from my GitHub account.</p>
+            <a href="https://github.com/Auro-rium" target="_blank" rel="noopener" aria-label="Open Auro-rium's GitHub profile"><img class="contribution-chart" src="https://ghchart.rshah.org/39d353/Auro-rium" alt="Auro-rium's live GitHub contribution chart" loading="lazy" /></a>
+            <p class="github-note">Only public activity is shown. Open GitHub for the full profile.</p>
           </div>
         </div>
       </section>
@@ -141,49 +133,6 @@
         list.innerHTML = projects.map(project => `<article class="project"><span class="num">${project.number}</span><div><h3>${project.title}</h3><p>${project.body}</p></div><div class="project-links">${project.repo ? `<a href="${project.repo}" target="_blank" rel="noopener">GitHub ↗</a>` : ''}${project.explainer ? `<a href="${project.explainer}" target="_blank" rel="noopener">Explainer ↗</a>` : ''}${project.site ? `<a href="${project.site}" target="_blank" rel="noopener">Visit ↗</a>` : ''}</div></article>`).join('');
       };
       document.querySelectorAll('.tab').forEach(button => button.addEventListener('click', () => { document.querySelector('.tab.active').classList.remove('active'); button.classList.add('active'); render(button.dataset.group); })); render('systems');
-      (async () => {
-        const grid = document.getElementById('contribution-grid');
-        const status = document.getElementById('github-status');
-        const meta = document.getElementById('github-meta');
-        const repositories = document.getElementById('repo-activity');
-        const escape = value => String(value || '').replace(/[&<>"']/g, character => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[character]);
-        const formatDate = value => new Intl.DateTimeFormat('en', { month:'short', day:'numeric' }).format(new Date(value));
-        const relativeDate = value => new Intl.DateTimeFormat('en', { month:'short', year:'numeric' }).format(new Date(value));
-        const dayKey = value => new Date(value).toISOString().slice(0, 10);
-        const drawGrid = counts => {
-          const today = new Date(); today.setUTCHours(0, 0, 0, 0);
-          const start = new Date(today); start.setUTCDate(start.getUTCDate() - 125);
-          const cells = [];
-          for (let offset = 0; offset < 126; offset += 1) {
-            const day = new Date(start); day.setUTCDate(start.getUTCDate() + offset);
-            const key = dayKey(day); const count = counts.get(key) || 0;
-            const level = count === 0 ? 0 : count === 1 ? 1 : count <= 3 ? 2 : count <= 6 ? 3 : 4;
-            cells.push(`<span class="contribution level-${level}" title="${count} public GitHub event${count === 1 ? '' : 's'} on ${formatDate(day)}" aria-label="${count} public GitHub event${count === 1 ? '' : 's'} on ${formatDate(day)}"></span>`);
-          }
-          grid.innerHTML = cells.join('');
-        };
-        try {
-          const [profileResponse, eventsResponse, reposResponse] = await Promise.all([
-            fetch('https://api.github.com/users/Auro-rium', { headers:{ Accept:'application/vnd.github+json' } }),
-            fetch('https://api.github.com/users/Auro-rium/events/public?per_page=100', { headers:{ Accept:'application/vnd.github+json' } }),
-            fetch('https://api.github.com/users/Auro-rium/repos?sort=pushed&per_page=3', { headers:{ Accept:'application/vnd.github+json' } })
-          ]);
-          if (!profileResponse.ok || !eventsResponse.ok || !reposResponse.ok) throw new Error('GitHub activity is unavailable');
-          const [profile, events, repos] = await Promise.all([profileResponse.json(), eventsResponse.json(), reposResponse.json()]);
-          if (!Array.isArray(events) || !Array.isArray(repos)) throw new Error('No public GitHub activity found');
-          const counts = new Map(); events.forEach(event => { const key = dayKey(event.created_at); counts.set(key, (counts.get(key) || 0) + 1); });
-          drawGrid(counts);
-          const activeDays = counts.size;
-          meta.innerHTML = `<span><strong>${profile.public_repos || 0}</strong> public repositories</span><span><strong>${activeDays}</strong> active days in recent public events</span>`;
-          repositories.innerHTML = repos.map(repo => `<li><a href="${escape(repo.html_url)}" target="_blank" rel="noopener">${escape(repo.name)} ↗</a><span>active ${relativeDate(repo.pushed_at)}</span></li>`).join('');
-          status.textContent = 'Fetched live from the public GitHub account.';
-        } catch (error) {
-          drawGrid(new Map());
-          status.textContent = 'GitHub activity could not be loaded right now.';
-          meta.innerHTML = '<span>Open the public profile for the latest work.</span>';
-          repositories.innerHTML = '<li><a href="https://github.com/Auro-rium" target="_blank" rel="noopener">View GitHub profile ↗</a></li>';
-        }
-      })();
     </script>
   </body>
 </html>
