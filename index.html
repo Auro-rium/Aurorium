@@ -31,6 +31,11 @@
       .actions { display:flex; flex-wrap:wrap; justify-content:center; gap:18px; margin-top:54px; }
       .button { min-width:172px; padding:16px 23px; border-radius:13px; background:#f4f4f4; color:#171717; font-size:18px; font-weight:750; text-align:center; box-shadow:0 1px 0 rgba(255,255,255,.5) inset; }
       .button:hover { opacity:.84; }
+      .live-series { width:min(100%, 600px); margin-top:28px; padding:16px 18px; display:flex; align-items:center; justify-content:space-between; gap:18px; border:1px solid #4a4a4a; border-radius:13px; background:#111; text-align:left; }
+      .live-series:hover { opacity:.88; }
+      .live-series strong { display:block; margin-top:5px; font-size:17px; letter-spacing:-.025em; }
+      .live-series small { color:var(--muted); font-size:13px; }
+      .live-series .watch { flex:none; color:#fff; font-size:13px; font-weight:750; }
       section { padding:78px 0; }
       .section-title { margin:0 0 40px; text-align:center; font-size:clamp(32px,4.2vw,48px); letter-spacing:-.06em; line-height:1; }
       .work { width:min(100%, 760px); margin:auto; padding:8px; border:1px solid var(--line); border-radius:15px; background:#1d1d1d; }
@@ -69,7 +74,7 @@
         .page { width:min(100% - 30px, 920px); }
         .top { padding-top:20px; }.nav { gap:1px; padding:6px; }.nav a { width:36px; height:36px; font-size:16px; }.nav i { height:21px; margin:0; }
         .hero { min-height:760px; justify-content:flex-start; padding:90px 0 82px; }.avatar { width:142px; height:142px; }
-        h1 { margin-top:53px; font-size:42px; }.intro { margin-top:42px; font-size:19px; }.actions { margin-top:50px; gap:14px; }.button { min-width:146px; padding:15px 16px; font-size:16px; }
+        h1 { margin-top:53px; font-size:42px; }.intro { margin-top:42px; font-size:19px; }.actions { margin-top:50px; gap:14px; }.button { min-width:146px; padding:15px 16px; font-size:16px; }.live-series { align-items:flex-start; padding:15px; }.live-series .watch { margin-top:4px; }
         section { padding:62px 0; }.section-title { margin-bottom:34px; }.project { grid-template-columns:auto 1fr; gap:12px; }.project-links { grid-column:2; }.project h3 { font-size:20px; }.project p { font-size:14px; }.github-card { padding:20px; }.github-head { align-items:flex-start; flex-direction:column; gap:3px; }.contribution-chart { min-height:86px; }.leetcode-chart { min-height:150px; }.blog-list { grid-template-columns:1fr; }.blog-card { min-height:0; padding:21px; }
       }
     </style>
@@ -95,6 +100,10 @@
         <h1>Hi, I’m Ishan Trivedi</h1>
         <p class="intro">I build applied AI systems: RAG, agents, fine-tuning, and the engineering that makes them reliable. I learn fast, ship real work, and care about the details.</p>
         <div class="actions"><a class="button" href="#work">Proof of work</a><a class="button" href="#contact">Get in touch</a></div>
+        <a class="live-series" href="https://www.youtube.com/@AuroriumNexus" target="_blank" rel="noopener" aria-label="Watch the live 60 Days of Post-training series on YouTube">
+          <span><span class="live-badge">LIVE</span><strong>60 Days of Post-training</strong><small>Learn · Break · Ship</small></span>
+          <span class="watch">Watch on YouTube ↗</span>
+        </a>
       </section>
 
       <section id="work">
@@ -148,15 +157,14 @@
           { number:'02', title:'Aurorium', body:'Personal experiments, systems, and a home for my work.', site:'https://auro-rium.github.io/Aurorium/' }
         ],
         now: [
-          { number:'01', title:'Solving TensorTonic', body:'Working through machine-learning problems from first principles.', site:'https://www.tensortonic.com/profile/aurorium-nexus' },
-          { number:'02', title:'60 Days of Post-training', body:'Learn · Break · Ship — a 60-day post-training series.', site:'https://www.youtube.com/@AuroriumNexus', live:true }
+          { number:'01', title:'Solving TensorTonic', body:'Working through machine-learning problems from first principles.', site:'https://www.tensortonic.com/profile/aurorium-nexus' }
         ]
       };
       const list = document.getElementById('projects');
       const render = group => {
         const projects = groups[group];
         if (!projects.length) { list.innerHTML = '<p class="empty-state">Nothing listed here yet.</p>'; return; }
-        list.innerHTML = projects.map(project => `<article class="project"><span class="num">${project.number}</span><div><h3>${project.title}${project.live ? ' <span class="live-badge">LIVE</span>' : ''}</h3><p>${project.body}</p></div><div class="project-links">${project.repo ? `<a href="${project.repo}" target="_blank" rel="noopener">GitHub ↗</a>` : ''}${project.explainer ? `<a href="${project.explainer}" target="_blank" rel="noopener">Explainer ↗</a>` : ''}${project.site ? `<a href="${project.site}" target="_blank" rel="noopener">Visit ↗</a>` : ''}</div></article>`).join('');
+        list.innerHTML = projects.map(project => `<article class="project"><span class="num">${project.number}</span><div><h3>${project.title}</h3><p>${project.body}</p></div><div class="project-links">${project.repo ? `<a href="${project.repo}" target="_blank" rel="noopener">GitHub ↗</a>` : ''}${project.explainer ? `<a href="${project.explainer}" target="_blank" rel="noopener">Explainer ↗</a>` : ''}${project.site ? `<a href="${project.site}" target="_blank" rel="noopener">Visit ↗</a>` : ''}</div></article>`).join('');
       };
       document.querySelectorAll('.tab').forEach(button => button.addEventListener('click', () => { document.querySelector('.tab.active').classList.remove('active'); button.classList.add('active'); render(button.dataset.group); })); render('systems');
     </script>
