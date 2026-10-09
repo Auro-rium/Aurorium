@@ -78,7 +78,7 @@
       .card.open { opacity:1; visibility:visible; transform:none; }
       .shot { position:relative; aspect-ratio:2/1; background:#0d0d0b; border-bottom:1px solid #1d1c19; }
       .shot img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-      .shot iframe { position:absolute; left:0; top:0; border:0; background:#fff; transform-origin:0 0; display:none; }
+      .shot iframe { position:absolute; left:0; top:0; border:0; background:#000; transform-origin:0 0; display:none; }
       .shot.nopic img { visibility:hidden; } .shot.nopic::before { content:attr(data-name); position:absolute; inset:0; display:grid; place-items:center; font:400 26px var(--serif); color:var(--dim); }
       .shot.live img { display:none; } .shot.live iframe { display:block; }
       .shot .tabs { position:absolute; left:8px; bottom:8px; display:flex; gap:4px; padding:3px; border-radius:8px; background:rgba(0,0,0,.7); backdrop-filter:blur(6px); }
@@ -210,6 +210,7 @@
         { id:'canary', title:'Agent Canary', date:'2026-06-19', body:'A red-team workflow for testing HTTP AI agents and validating the mitigations.', repo:'https://github.com/Auro-rium/canary', gh:'canary', links:[['Explainer','https://agent-canary-explainer.vercel.app/']], live:'https://agent-canary-explainer.vercel.app/' },
         { id:'mind', title:'Aurorium Mind', date:'2026-08-16', body:'A QLoRA-tuned Qwen 3.5 4B served with vLLM, Rust and FastAPI, with a Next.js workspace on top.', repo:'https://github.com/Auro-rium/aurorium-mind', gh:'aurorium-mind', links:[['Live site','https://aurorium-mind.vercel.app/']], live:'https://aurorium-mind.vercel.app/' },
         { id:'skills', title:'Post-training Skills', date:'2026-08-21', body:'A field guide and local deep agent for learning the major parts of LLM post-training.', repo:'https://github.com/Auro-rium/posttraining-skills', gh:'posttraining-skills', links:[['Live site','https://posttraining-skills.vercel.app/']], live:'https://posttraining-skills.vercel.app/' },
+        { id:'canarycutc', title:'Canary Backend', date:'2026-08-08', tag:'Hackathon', owner:'aiyush-22-git', body:'The backend of a release gate that red-teams AI agents over HTTP and replays the attacks against a baseline, returning PASS, WARN or BLOCK. Built for a hackathon; I contributed 25 commits.', repo:'https://github.com/aiyush-22-git/Canary-Cutc', gh:'Canary-Cutc', links:[['Live site','https://canary-coral.vercel.app']], live:'https://canary-coral.vercel.app' },
         { id:'distillery', title:'Distillery', date:'2026-09-29', wip:true, body:'A sandbox-verified distillation autopilot on Nebius Token Factory. Building it now.', repo:'https://github.com/Auro-rium/distillery', gh:'distillery', links:[] }
       ];
       const DAY = 864e5, D0 = Date.parse('2025-08-01'), D1 = Date.parse('2026-10-09');
@@ -266,7 +267,7 @@
       // preview card
       const $ = id => document.getElementById(id);
       let hideTimer;
-      const ghImg = p => `https://opengraph.githubassets.com/1/Auro-rium/${p.gh}`;
+      const ghImg = p => `https://opengraph.githubassets.com/1/${p.owner || 'Auro-rium'}/${p.gh}`;
             $('shotImg').addEventListener('error', () => $('shotImg').closest('.shot').classList.add('nopic'));
       $('shotImg').addEventListener('load', () => $('shotImg').closest('.shot').classList.remove('nopic'));
       let curMode = 'repo';
@@ -277,13 +278,13 @@
         if (live) {
           const k = shot.clientWidth / 1280; fr.style.width = '1280px'; fr.style.height = (shot.clientHeight / k) + 'px'; fr.style.transform = `scale(${k})`;
           if (fr.dataset.src !== p.live) { fr.src = p.live; fr.dataset.src = p.live; }
-        } else { shot.dataset.name = 'Auro-rium/' + p.gh; shot.classList.remove('nopic'); $('shotImg').src = ghImg(p); $('shotImg').alt = `${p.title} GitHub repository preview`; }
+        } else { shot.dataset.name = (p.owner || 'Auro-rium') + '/' + p.gh; shot.classList.remove('nopic'); $('shotImg').src = ghImg(p); $('shotImg').alt = `${p.title} GitHub repository preview`; }
         $('shotTabs').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === mode)));
       }
       function show(i) {
         curMode = 'repo'; clearTimeout(hideTimer); const p = projects[i]; active = i;
         dots.forEach((d, k) => { d.setAttribute('aria-expanded', String(k === i)); labels[k].classList.toggle('on', k === i); });
-        $('cardDate').textContent = (p.wip ? 'Started ' : 'Shipped ') + fmt(shipped[i]) + (p.wip ? ' · building' : ''); $('cardTitle').textContent = p.title; $('cardBody').textContent = p.body;
+        $('cardDate').textContent = (p.wip ? 'Started ' : p.tag ? p.tag + ' · ' : 'Shipped ') + fmt(shipped[i]) + (p.wip ? ' · building' : ''); $('cardTitle').textContent = p.title; $('cardBody').textContent = p.body;
         $('cardLinks').innerHTML = `<a href="${p.repo}" target="_blank" rel="noopener">View on GitHub</a>` + p.links.map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join('');
         const tabs = $('shotTabs'); tabs.innerHTML = '';
         if (p.live) { [['repo', 'Repo'], ['live', 'Live']].forEach(([m, n]) => { const b = document.createElement('button'); b.type = 'button'; b.dataset.m = m; b.textContent = n; b.addEventListener('click', e => { e.stopPropagation(); setShot(p, m); }); tabs.appendChild(b); }); }
