@@ -80,6 +80,8 @@
       .card.open { opacity:1; visibility:visible; transform:none; }
       .shot { position:relative; aspect-ratio:2/1; background:#0d0d0b; border-bottom:1px solid #1d1c19; }
       .shot img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+      .shot iframe { position:absolute; left:0; top:0; border:0; background:#fff; transform-origin:0 0; display:none; }
+      .shot.live img { display:none; } .shot.live iframe { display:block; }
       .shot .tabs { position:absolute; left:8px; bottom:8px; display:flex; gap:4px; padding:3px; border-radius:8px; background:rgba(0,0,0,.7); backdrop-filter:blur(6px); }
       .shot .tabs button { border:0; background:transparent; color:var(--dim); font:500 12px var(--sans); padding:4px 10px; border-radius:6px; cursor:pointer; }
       .shot .tabs button[aria-pressed="true"] { background:#24221d; color:var(--ink); }
@@ -173,7 +175,7 @@
           <div class="readout" id="readout"></div>
           <div class="card" id="card" role="dialog" aria-label="Project preview">
             <button class="x" id="cardX" type="button" aria-label="Close preview">×</button>
-            <div class="shot"><img id="shotImg" alt="" /><div class="tabs" id="shotTabs"></div></div>
+            <div class="shot"><img id="shotImg" alt="" /><iframe id="shotFrame" title="Live site preview" tabindex="-1" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-popups"></iframe><div class="tabs" id="shotTabs"></div></div>
             <div class="card-body"><div class="card-date" id="cardDate"></div><h3 id="cardTitle"></h3><p id="cardBody"></p><div class="card-links" id="cardLinks"></div></div>
           </div>
         </div>
@@ -270,14 +272,19 @@
       const $ = id => document.getElementById(id);
       let hideTimer;
       const ghImg = p => `https://opengraph.githubassets.com/1/Auro-rium/${p.gh}`;
-      const liveImg = p => `https://image.thum.io/get/width/800/crop/400/${p.live}`;
+            let curMode = 'repo';
       function setShot(p, mode) {
-        $('shotImg').src = mode === 'live' ? liveImg(p) : ghImg(p);
-        $('shotImg').alt = `${p.title} ${mode === 'live' ? 'live site' : 'GitHub repository'} preview`;
+        curMode = mode;
+        const shot = document.querySelector('.shot'), fr = $('shotFrame'), live = mode === 'live';
+        shot.classList.toggle('live', live);
+        if (live) {
+          const k = shot.clientWidth / 1280; fr.style.width = '1280px'; fr.style.height = (shot.clientHeight / k) + 'px'; fr.style.transform = `scale(${k})`;
+          if (fr.dataset.src !== p.live) { fr.src = p.live; fr.dataset.src = p.live; }
+        } else { $('shotImg').src = ghImg(p); $('shotImg').alt = `${p.title} GitHub repository preview`; }
         $('shotTabs').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === mode)));
       }
       function show(i) {
-        clearTimeout(hideTimer); const p = projects[i]; active = i;
+        curMode = 'repo'; clearTimeout(hideTimer); const p = projects[i]; active = i;
         dots.forEach((d, k) => { d.setAttribute('aria-expanded', String(k === i)); labels[k].classList.toggle('on', k === i); });
         $('cardDate').textContent = 'Shipped ' + fmt(shipped[i]); $('cardTitle').textContent = p.title; $('cardBody').textContent = p.body;
         $('cardLinks').innerHTML = `<a href="${p.repo}" target="_blank" rel="noopener">View on GitHub</a>` + p.links.map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join('');
@@ -291,7 +298,7 @@
         let top = by - ch / 2; top = Math.max(0, Math.min(top, H - ch));
         card.style.left = left + 'px'; card.style.top = top + 'px';
       }
-      function hide() { card.classList.remove('open'); active = null; dots.forEach((d, k) => { d.setAttribute('aria-expanded', 'false'); labels[k].classList.remove('on'); }); }
+      function hide() { card.classList.remove('open'); active = null; $('shotFrame').removeAttribute('src'); $('shotFrame').dataset.src = ''; dots.forEach((d, k) => { d.setAttribute('aria-expanded', 'false'); labels[k].classList.remove('on'); }); }
       function hideSoon() { hideTimer = setTimeout(() => { if (pinned === null) hide(); }, 180); }
       card.addEventListener('pointerenter', () => clearTimeout(hideTimer));
       card.addEventListener('pointerleave', () => { if (pinned === null) hideSoon(); });
@@ -335,9 +342,9 @@
       }
 
       draw(); heat();
-      { const i = projects.findIndex(p => '#' + p.id === location.hash); if (i >= 0) { pinned = i; show(i); } }
-      let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { const a = active; draw(); if (a !== null) show(a); }, 80); });
-      if (document.fonts) document.fonts.ready.then(() => { const a = active; draw(); if (a !== null) show(a); });
+      { const [id, mode] = location.hash.slice(1).split(':'), i = projects.findIndex(p => p.id === id); if (i >= 0) { pinned = i; show(i); if (mode === 'live' && projects[i].live) setShot(projects[i], 'live'); } }
+      let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { const a = active, m = curMode; draw(); if (a !== null) { show(a); if (m === 'live') setShot(projects[a], 'live'); } }, 80); });
+      if (document.fonts) document.fonts.ready.then(() => { const a = active, m = curMode; draw(); if (a !== null) { show(a); if (m === 'live') setShot(projects[a], 'live'); } });
     </script>
   </body>
 </html>
