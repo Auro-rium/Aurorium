@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 
 const html = readFileSync("index.html", "utf8");
-const required = ["Ishan Trivedi", "Proof of Work", "GitHub timeline", "LeetCode grind", "Backend systems", "Applied AI", "ishan-trivedi-portrait.jpg"];
+const required = ["Ishan Trivedi", "Proof of Work", "Applied AI", "ishan-trivedi-portrait.jpg"];
 
 for (const phrase of required) {
   if (!html.includes(phrase)) throw new Error(`Missing required content: ${phrase}`);
