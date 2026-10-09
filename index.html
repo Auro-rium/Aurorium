@@ -64,6 +64,7 @@
       .cross { stroke:var(--faint); stroke-width:1; }
       .cp { position:absolute; width:44px; height:44px; margin:-22px 0 0 -22px; border:0; background:transparent; cursor:pointer; padding:0; }
       .cp::before { content:""; position:absolute; left:50%; top:50%; width:11px; height:11px; margin:-5.5px 0 0 -5.5px; border-radius:50%; background:#000; border:2px solid var(--amber); transition:transform .18s, background .18s; }
+      .cp.wip::before { border-style:dashed; }
       .cp:hover::before, .cp[aria-expanded="true"]::before, .cp:focus-visible::before { background:var(--amber); transform:scale(1.55); }
       .cp:focus-visible { outline-offset:-6px; border-radius:50%; }
       .cp-label { position:absolute; white-space:nowrap; font-size:13px; color:var(--dim); pointer-events:none; transition:color .18s; }
@@ -156,11 +157,11 @@
       <main id="top">
         <div class="intro">
           <h1>Post-trained models, RAG pipelines and agentic systems.</h1>
-          <p>Applied AI engineer. Every ring below is a project I shipped, placed on the loss curve by date.</p>
+          <p>Applied AI engineer. Every ring below is a project I built, placed on the loss curve by date.</p>
         </div>
 
         <div class="plot-head">
-          <span><b>Loss over time</b> · May to now</span>
+          <span><b>Loss over time</b> · May to now · dashed ring is in progress</span>
           <span class="key"><span><i></i>train</span><span><i class="v"></i>validation</span></span>
         </div>
         <div class="plot" id="plot" role="group" aria-label="Loss curve with one checkpoint per project">
@@ -205,15 +206,16 @@
         { id:'audioforge', title:'AudioForge', date:'2026-05-29', body:'A reproducible audio-ML training pipeline with LoRA adaptation and published artifacts.', repo:'https://github.com/Auro-rium/audioforge', gh:'audioforge', links:[['Explainer','https://audioforge-explained.vercel.app/']], live:'https://audioforge-explained.vercel.app/' },
         { id:'canary', title:'Agent Canary', date:'2026-06-19', body:'A red-team workflow for testing HTTP AI agents and validating the mitigations.', repo:'https://github.com/Auro-rium/canary', gh:'canary', links:[['Explainer','https://agent-canary-explainer.vercel.app/']], live:'https://agent-canary-explainer.vercel.app/' },
         { id:'mind', title:'Aurorium Mind', date:'2026-08-16', body:'A QLoRA-tuned Qwen 3.5 4B served with vLLM, Rust and FastAPI, with a Next.js workspace on top.', repo:'https://github.com/Auro-rium/aurorium-mind', gh:'aurorium-mind', links:[['Live site','https://aurorium-mind.vercel.app/']], live:'https://aurorium-mind.vercel.app/' },
-        { id:'skills', title:'Post-training Skills', date:'2026-08-21', body:'A field guide and local deep agent for learning the major parts of LLM post-training.', repo:'https://github.com/Auro-rium/posttraining-skills', gh:'posttraining-skills', links:[['Live site','https://posttraining-skills.vercel.app/']], live:'https://posttraining-skills.vercel.app/' }
+        { id:'skills', title:'Post-training Skills', date:'2026-08-21', body:'A field guide and local deep agent for learning the major parts of LLM post-training.', repo:'https://github.com/Auro-rium/posttraining-skills', gh:'posttraining-skills', links:[['Live site','https://posttraining-skills.vercel.app/']], live:'https://posttraining-skills.vercel.app/' },
+        { id:'distillery', title:'Distillery', date:'2026-09-29', wip:true, body:'A sandbox-verified distillation autopilot on Nebius Token Factory. Building it now.', repo:'https://github.com/Auro-rium/distillery', gh:'distillery', links:[] }
       ];
       const DAY = 864e5, D0 = Date.parse('2026-05-01'), D1 = Date.parse('2026-10-09');
       const fmt = t => new Date(t).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric', timeZone:'UTC' });
-      const shipped = projects.map(p => Date.parse(p.date));
+      const shipped = projects.map(p => Date.parse(p.date)), done = projects.filter(p => !p.wip).map(p => Date.parse(p.date));
 
       // illustrative loss: each shipped project steps the loss down
       const sig = x => 1 / (1 + Math.exp(-x));
-      const loss = t => 0.16 + 2.3 * Math.exp(-0.5 * shipped.reduce((a, d) => a + sig((t - d) / (3 * DAY)), 0));
+      const loss = t => 0.16 + 2.3 * Math.exp(-0.5 * done.reduce((a, d) => a + sig((t - d) / (3 * DAY)), 0));
       const prng = (a => () => { a |= 0; a = a + 0x6D2B79F5 | 0; let x = Math.imul(a ^ a >>> 15, 1 | a); x = x + Math.imul(x ^ x >>> 7, 61 | x) ^ x; return ((x ^ x >>> 14) >>> 0) / 4294967296; })(7);
       const days = []; for (let t = D0; t <= D1; t += DAY) days.push(t);
       const raw = days.map(t => loss(t) + (prng() - .45) * (0.08 + 0.2 * loss(t)));
@@ -240,7 +242,7 @@
         cross = el('line', { class:'cross', y1:M.t, y2:H - M.b, opacity:0 });
         dots = projects.map((p, i) => {
           const t = shipped[i], b = document.createElement('button');
-          b.className = 'cp'; b.type = 'button'; b.style.left = X(t) + 'px'; b.style.top = Y(loss(t)) + 'px';
+          b.className = 'cp' + (p.wip ? ' wip' : ''); b.type = 'button'; b.style.left = X(t) + 'px'; b.style.top = Y(loss(t)) + 'px';
           b.setAttribute('aria-label', `${p.title}, ${fmt(t)}`); b.setAttribute('aria-expanded', 'false'); b.setAttribute('aria-controls', 'card');
           b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse' && pinned === null) show(i); });
           b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse' && pinned === null) hideSoon(); });
@@ -272,7 +274,7 @@
       function show(i) {
         curMode = 'repo'; clearTimeout(hideTimer); const p = projects[i]; active = i;
         dots.forEach((d, k) => { d.setAttribute('aria-expanded', String(k === i)); labels[k].classList.toggle('on', k === i); });
-        $('cardDate').textContent = 'Shipped ' + fmt(shipped[i]); $('cardTitle').textContent = p.title; $('cardBody').textContent = p.body;
+        $('cardDate').textContent = (p.wip ? 'Started ' : 'Shipped ') + fmt(shipped[i]) + (p.wip ? ' · building' : ''); $('cardTitle').textContent = p.title; $('cardBody').textContent = p.body;
         $('cardLinks').innerHTML = `<a href="${p.repo}" target="_blank" rel="noopener">View on GitHub</a>` + p.links.map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join('');
         const tabs = $('shotTabs'); tabs.innerHTML = '';
         if (p.live) { [['repo', 'Repo'], ['live', 'Live']].forEach(([m, n]) => { const b = document.createElement('button'); b.type = 'button'; b.dataset.m = m; b.textContent = n; b.addEventListener('click', e => { e.stopPropagation(); setShot(p, m); }); tabs.appendChild(b); }); }
