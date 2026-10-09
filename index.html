@@ -51,7 +51,7 @@
       .intro p a:hover { border-color:var(--amber); }
 
       /* the curve */
-      .scene.run .stick { position:sticky; top:0; min-height:100vh; display:flex; flex-direction:column; justify-content:flex-start; padding:72px 0 24px; }
+      .scene.run .stick { position:-webkit-sticky; position:sticky; top:0; min-height:100vh; min-height:100svh; display:flex; flex-direction:column; justify-content:flex-start; padding:72px 0 24px; }
       .ph { fill:var(--amber); } .ph-halo { fill:rgba(242,165,65,.2); }
       .cp, .cp-label { transition:opacity .35s; }
       .cp:not(.seen), .cp-label:not(.seen) { opacity:0; pointer-events:none; }
@@ -60,8 +60,8 @@
       .key { display:flex; gap:18px; }
       .key i { display:inline-block; width:18px; height:0; border-top:2px solid var(--amber); vertical-align:middle; margin-right:7px; }
       .key i.v { border-top:1px dashed var(--dim); }
-      .plot { position:relative; height:clamp(340px,56vh,560px); margin-top:8px; touch-action:pan-y; user-select:none; }
-      .plot svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+      .plot { position:relative; height:clamp(340px,56vh,560px); height:clamp(340px,56svh,560px); margin-top:8px; touch-action:pan-y; user-select:none; }
+      .plot svg { position:absolute; top:0; left:0; width:100%; height:100%; overflow:visible; }
       .tick { fill:var(--dim); font:11px var(--mono); }
       .grid { stroke:var(--rule); stroke-width:1; }
       .raw { fill:none; stroke:var(--amber); stroke-opacity:.28; stroke-width:1; }
@@ -82,12 +82,12 @@
       /* popup */
       .card { position:absolute; z-index:6; width:400px; max-width:calc(100vw - 32px); background:#080807; border:1px solid #2a2824; border-radius:14px; overflow:hidden; box-shadow:0 24px 60px -12px #000, 0 0 0 1px #000; opacity:0; visibility:hidden; transform:translateY(6px) scale(.98); transition:opacity .16s, transform .16s, visibility .16s; }
       .card.open { opacity:1; visibility:visible; transform:none; }
-      .shot { position:relative; aspect-ratio:2/1; background:#0d0d0b; border-bottom:1px solid #1d1c19; }
-      .shot img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-      .shot iframe { position:absolute; left:0; top:0; border:0; background:#000; transform-origin:0 0; display:none; }
-      .shot.nopic img { visibility:hidden; } .shot.nopic::before { content:attr(data-name); position:absolute; inset:0; display:grid; place-items:center; font:400 26px var(--serif); color:var(--dim); }
+      .shot { position:relative; height:0; padding-top:50%; background:#0d0d0b; border-bottom:1px solid #1d1c19; }
+      .shot img { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; }
+      .shot iframe { position:absolute; left:0; top:0; border:0; pointer-events:none; background:#000; transform-origin:0 0; display:none; }
+      .shot.nopic img { visibility:hidden; } .shot.nopic::before { content:attr(data-name); position:absolute; top:0; left:0; right:0; bottom:0; display:grid; place-items:center; font:400 26px var(--serif); color:var(--dim); }
       .shot.live img { display:none; } .shot.live iframe { display:block; }
-      .shot .tabs { position:absolute; left:8px; bottom:8px; display:flex; gap:4px; padding:3px; border-radius:8px; background:rgba(0,0,0,.7); backdrop-filter:blur(6px); }
+      .shot .tabs { position:absolute; left:8px; bottom:8px; display:flex; gap:4px; padding:3px; border-radius:8px; background:rgba(0,0,0,.7); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
       .shot .tabs button { border:0; background:transparent; color:var(--dim); font:500 12px var(--sans); padding:4px 10px; border-radius:6px; cursor:pointer; }
       .shot .tabs button[aria-pressed="true"] { background:#24221d; color:var(--ink); }
       .card-body { padding:14px 16px 16px; }
@@ -138,10 +138,13 @@
         .tt { grid-template-columns:1fr; }
         .card { position:fixed; left:12px !important; right:12px; bottom:12px; top:auto !important; width:auto; max-width:none; transform:translateY(16px); }
         .card .x { display:block; }
+        .plot { height:clamp(260px,40vh,360px); height:clamp(260px,40svh,360px); }
+        .card h3 { font-size:20px; } .card p { font-size:13px; margin:6px 0 12px; } .card-body { padding:12px 14px 14px; }
         .key { display:none; }
         .hint { display:none; }
       }
       @media (max-width:560px) { .cp-label:not(.on) { display:none; } .top nav > a:not(.ico), .top .sep { display:none; } .top nav { flex-wrap:nowrap; gap:14px; } }
+      @media (max-width:400px) { .mark { gap:8px; font-size:14px; } .mark img { width:30px; height:30px; } .top { gap:8px; } .top nav { gap:2px !important; } .ico { width:30px; height:30px; margin:0 -3px; } .ico svg { width:18px; height:18px; } }
       @media (prefers-reduced-motion:reduce) { * { animation:none !important; transition:none !important; } html { scroll-behavior:auto; } }
     </style>
   </head>
@@ -181,7 +184,7 @@
             <div class="card-body"><div class="card-date" id="cardDate"></div><h3 id="cardTitle"></h3><p id="cardBody"></p><div class="card-links" id="cardLinks"></div></div>
           </div>
         </div>
-        <p class="hint">Scroll to run the curve. Hover or tap a ring to open it, ← → to step through. The curve is illustrative: its shape follows my real contribution history, and the rings sit on real repo creation dates.</p>
+        <p class="hint">Scroll to run the curve. Hover or tap a ring to preview it, ← → to step through. The curve is illustrative: its shape follows my real contribution history, and the rings sit on real repo creation dates.</p>
         </div></div>
 
         <section id="activity">
@@ -246,7 +249,7 @@
       const NS = 'http://www.w3.org/2000/svg', M = { l:44, r:24, t:18, b:30 };
       const scene = document.getElementById('scene'), scrollMode = !matchMedia('(prefers-reduced-motion:reduce)').matches;
       let W = 0, H = 0, YMAX = 2.6, pinned = null, active = null, contrib = new Map(), tc = scrollMode ? D0 : D1, autoIdx = -2, clipRect, head, halo;
-      if (scrollMode) { scene.classList.add('run'); scene.style.height = `calc(100vh + ${(projects.length + 1) * 36}vh)`; }
+      if (scrollMode) { scene.classList.add('run'); const n36 = (projects.length + 1) * 36; scene.style.height = `calc(100vh + ${n36}vh)`; if (window.CSS && CSS.supports('height', '100svh')) scene.style.height = `calc(100svh + ${n36}svh)`; }
       const X = t => M.l + (t - D0) / (D1 - D0) * (W - M.l - M.r);
       const Y = v => M.t + (1 - v / YMAX) * (H - M.t - M.b);
       const el = (n, a = {}, p = svg) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); p.appendChild(e); return e; };
@@ -328,7 +331,7 @@
         card.style.left = left + 'px'; card.style.top = top + 'px';
       }
       function hide() { card.classList.remove('open'); active = null; $('shotFrame').removeAttribute('src'); $('shotFrame').dataset.src = ''; dots.forEach((d, k) => { d.setAttribute('aria-expanded', 'false'); labels[k].classList.remove('on'); }); }
-      function hideSoon() { hideTimer = setTimeout(() => { if (pinned === null) { scrollMode && autoIdx >= 0 ? show(autoIdx) : hide(); } }, 180); }
+      function hideSoon() { hideTimer = setTimeout(() => { if (pinned === null) hide(); }, 180); }
       card.addEventListener('pointerenter', () => clearTimeout(hideTimer));
       card.addEventListener('pointerleave', () => { if (pinned === null) hideSoon(); });
       $('cardX').addEventListener('click', () => { pinned = null; hide(); });
@@ -338,7 +341,7 @@
         if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft') && (plot.contains(document.activeElement) || active !== null)) {
           const n = ((active ?? (e.key === 'ArrowRight' ? -1 : 0)) + (e.key === 'ArrowRight' ? 1 : -1) + projects.length) % projects.length;
           e.preventDefault();
-          if (scrollMode) { pinned = null; gotoProgress((n + 1) / (K.length - 1), true); } else { pinned = n; show(n); dots[n].focus({ preventScroll:true }); }
+          if (scrollMode) { pinned = null; gotoProgress((n + 1) / (K.length - 1), true); setTimeout(() => { pinned = n; show(n); dots[n].focus({ preventScroll:true }); }, 900); } else { pinned = n; show(n); dots[n].focus({ preventScroll:true }); }
         }
       });
 
@@ -359,6 +362,7 @@
         contrib = new Map(data.days);
         const w = days.map(t => Math.sqrt(contrib.get(new Date(t).toISOString().slice(0, 10)) || 0)); let run = 0; const tot = w.reduce((x, y) => x + y, 0) || 1;
         cum = w.map(v => (run += v) / tot); series(); const keep = active, m = curMode; draw(); if (keep !== null) { show(keep); setShot(projects[keep], m); }
+        requestAnimationFrame(() => { const hw = document.querySelector('.heat-wrap'); hw.scrollLeft = hw.scrollWidth; });
         $('total').firstChild.textContent = data.total.toLocaleString('en-US');
         const h = $('heat'), cell = 12, gap = 3, step = cell + gap, left = 28, top = 20, weeks = [];
         data.days.forEach(([d, c], i) => { const dow = new Date(d + 'T00:00:00Z').getUTCDay(); if (i === 0 || dow === 0) weeks.push([]); weeks[weeks.length - 1][dow] = [d, c]; });
@@ -375,8 +379,8 @@
 
       draw(); heat();
       // scroll-driven playback: scroll position -> time cursor (equal scroll per project, so every ring gets its moment)
-      const span = () => scene.offsetHeight - innerHeight;
-      function gotoProgress(p, smooth) { window.scrollTo({ top: scene.getBoundingClientRect().top + scrollY + p * span() + 2, behavior: smooth ? 'smooth' : 'instant' }); }
+      const stage = scene.querySelector('.stick'), span = () => scene.offsetHeight - stage.offsetHeight;
+      function gotoProgress(p, smooth) { window.scrollTo({ top: scene.getBoundingClientRect().top + scrollY + p * span() + 2, behavior: smooth ? 'smooth' : 'auto' }); }
       let tick = 0;
       function onScroll() {
         if (!scrollMode || tick) return;
@@ -386,16 +390,16 @@
           tc = K[i] + (K[i + 1] - K[i]) * (u - i); if (p >= 1) tc = D1;
           applyCursor();
           let idx = -1; if (p < 0.995) shipped.forEach((t, k) => { if (t <= tc) idx = k; });
-          if (idx !== autoIdx) { autoIdx = idx; pinned = null; idx >= 0 ? show(idx) : hide(); }
+          if (idx !== autoIdx) { autoIdx = idx; if (active !== null) { pinned = null; hide(); } }
         });
       }
       addEventListener('scroll', onScroll, { passive:true });
       { const [id, mode] = location.hash.slice(1).split(':'), i = projects.findIndex(p => p.id === id), t = /^t=([\d.]+)$/.exec(id);
-        if (scrollMode && (i >= 0 || t)) { requestAnimationFrame(() => { gotoProgress(i >= 0 ? (i + 1) / (K.length - 1) : +t[1]); setTimeout(() => { if (i >= 0 && mode && projects[i].live) setShot(projects[i], mode); }, 120); }); }
+        if (scrollMode && (i >= 0 || t)) { requestAnimationFrame(() => { gotoProgress(i >= 0 ? (i + 1) / (K.length - 1) : +t[1]); setTimeout(() => { if (i >= 0) { pinned = i; show(i); if (mode && projects[i].live) setShot(projects[i], mode); } }, 200); }); }
         else if (i >= 0) { pinned = i; show(i); if (mode && projects[i].live) setShot(projects[i], mode); } }
       onScroll();
       let rz; const redraw = () => { clearTimeout(rz); rz = setTimeout(() => { const a = active, m = curMode; draw(); if (a !== null) { show(a); setShot(projects[a], m); } }, 80); };
-      addEventListener('resize', redraw); if (window.ResizeObserver) new ResizeObserver(() => { const r = plot.getBoundingClientRect(); if (Math.abs(r.width - W) > 1 || Math.abs(r.height - H) > 1) redraw(); }).observe(plot);
+      let lastW = innerWidth; addEventListener('resize', () => { if (innerWidth !== lastW) { lastW = innerWidth; redraw(); } }); if (window.ResizeObserver) new ResizeObserver(() => { const r = plot.getBoundingClientRect(); if (Math.abs(r.width - W) > 1 || Math.abs(r.height - H) > 1) redraw(); }).observe(plot);
       if (document.fonts) document.fonts.ready.then(() => { const a = active, m = curMode; draw(); if (a !== null) { show(a); setShot(projects[a], m); } });
     </script>
   </body>
