@@ -68,9 +68,6 @@
       .cp:focus-visible { outline-offset:-6px; border-radius:50%; }
       .cp-label { position:absolute; white-space:nowrap; font-size:13px; color:var(--dim); pointer-events:none; transition:color .18s; }
       .cp-label.on { color:var(--ink); }
-      .live-dot { position:absolute; width:10px; height:10px; margin:-5px 0 0 -5px; border-radius:50%; background:#ff4a3d; }
-      .live-dot::after { content:""; position:absolute; inset:-6px; border-radius:50%; border:1px solid #ff4a3d; animation:ping 2.2s ease-out infinite; }
-      @keyframes ping { from { transform:scale(.4); opacity:.9; } to { transform:scale(1.5); opacity:0; } }
       .hint { color:var(--dim); font-size:13px; margin:10px 0 0; }
       .readout { position:absolute; pointer-events:none; padding:8px 10px; border:1px solid var(--faint); background:#050505; border-radius:8px; font:12px/1.5 var(--mono); color:var(--ink); opacity:0; transition:opacity .12s; white-space:nowrap; z-index:3; }
       .readout span { color:var(--dim); }
@@ -163,7 +160,7 @@
       <main id="top">
         <div class="intro">
           <h1>I build applied AI systems, and post-train the models inside them.</h1>
-          <p>Applied AI engineer working on SFT, RL, RAG and agents. Everything below is something I shipped, plotted by date. Currently teaching post-training in public: <a href="https://www.youtube.com/@AuroriumNexus" target="_blank" rel="noopener">60 days, live on YouTube</a>.</p>
+          <p>Applied AI engineer. I post-train models and build RAG pipelines and agentic systems. Everything below is something I shipped, plotted by date.</p>
         </div>
 
         <div class="plot-head">
@@ -239,11 +236,11 @@
       const el = (n, a = {}, p = svg) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); p.appendChild(e); return e; };
       const path = arr => arr.map((v, i) => (i ? 'L' : 'M') + X(days[i]).toFixed(1) + ' ' + Y(v).toFixed(1)).join('');
 
-      let cross, dots = [], labels = [], liveEl, liveLab;
+      let cross, dots = [], labels = [];
       function draw() {
         const r = plot.getBoundingClientRect(); W = r.width; H = r.height;
         svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.innerHTML = '';
-        plot.querySelectorAll('.cp,.cp-label,.live-dot').forEach(n => n.remove());
+        plot.querySelectorAll('.cp,.cp-label').forEach(n => n.remove());
         for (let v = 0; v <= 2.5; v += .5) { el('line', { class:'grid', x1:M.l, x2:W - M.r, y1:Y(v), y2:Y(v) }); el('text', { class:'tick', x:M.l - 8, y:Y(v) + 4, 'text-anchor':'end' }).textContent = v.toFixed(1); }
         for (let m = 4; m <= 9; m++) { const t = Date.UTC(2026, m, 1); if (t < D0 || t > D1) continue; el('text', { class:'tick', x:X(t), y:H - 8, 'text-anchor':'middle' }).textContent = new Date(t).toLocaleDateString('en-GB', { month:'short', timeZone:'UTC' }); }
         el('path', { class:'raw', d:path(raw) });
@@ -263,8 +260,6 @@
           const leftSide = X(t) > W - 170; l.style.left = (X(t) + (leftSide ? -16 : 16)) + 'px'; const crowded = i > 0 && X(t) - X(shipped[i - 1]) < 70; l.style.top = (Y(loss(t)) + (crowded ? 14 : -30)) + 'px'; if (leftSide) l.style.transform = 'translateX(-100%)';
           plot.appendChild(l); labels[i] = l; return b;
         });
-        liveEl = document.createElement('span'); liveEl.className = 'live-dot'; liveEl.style.left = X(D1) + 'px'; liveEl.style.top = Y(loss(D1)) + 'px'; plot.appendChild(liveEl);
-        liveLab = document.createElement('span'); liveLab.className = 'cp-label'; liveLab.textContent = W < 600 ? 'now · live' : 'now · 60 days of post-training, live'; liveLab.style.left = (X(D1) - 14) + 'px'; liveLab.style.top = (Y(loss(D1)) - 30) + 'px'; liveLab.style.transform = 'translateX(-100%)'; plot.appendChild(liveLab);
         if (active !== null) place(active);
       }
 
