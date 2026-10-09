@@ -79,6 +79,7 @@
       .shot { position:relative; aspect-ratio:2/1; background:#0d0d0b; border-bottom:1px solid #1d1c19; }
       .shot img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
       .shot iframe { position:absolute; left:0; top:0; border:0; background:#fff; transform-origin:0 0; display:none; }
+      .shot.nopic img { visibility:hidden; } .shot.nopic::before { content:attr(data-name); position:absolute; inset:0; display:grid; place-items:center; font:400 26px var(--serif); color:var(--dim); }
       .shot.live img { display:none; } .shot.live iframe { display:block; }
       .shot .tabs { position:absolute; left:8px; bottom:8px; display:flex; gap:4px; padding:3px; border-radius:8px; background:rgba(0,0,0,.7); backdrop-filter:blur(6px); }
       .shot .tabs button { border:0; background:transparent; color:var(--dim); font:500 12px var(--sans); padding:4px 10px; border-radius:6px; cursor:pointer; }
@@ -161,7 +162,7 @@
         </div>
 
         <div class="plot-head">
-          <span><b>Loss over time</b> · May to now · dashed ring is in progress</span>
+          <span><b>Loss over time</b> · Aug 2025 to now · dashed ring is in progress</span>
           <span class="key"><span><i></i>train</span><span><i class="v"></i>validation</span></span>
         </div>
         <div class="plot" id="plot" role="group" aria-label="Loss curve with one checkpoint per project">
@@ -201,6 +202,8 @@
 
     <script>
       const projects = [
+        { id:'dl', title:'Deep Learning', date:'2025-08-27', body:'A hands-on workspace of PyTorch, scikit-learn, computer vision and transformer experiments, including The Annotated Transformer.', repo:'https://github.com/Auro-rium/Deep_Learning', gh:'Deep_Learning', links:[] },
+        { id:'acali', title:'Acali', date:'2025-10-23', body:'An agentic Telegram bot that manages Google Calendar in natural language, built on LangGraph and Vertex AI.', repo:'https://github.com/Auro-rium/acali', gh:'acali', links:[] },
         { id:'logsage', title:'LogSage', date:'2026-05-09', body:'A QLoRA-trained model that turns application logs into structured diagnoses.', repo:'https://github.com/Auro-rium/logsage', gh:'logsage', links:[['Explainer','https://logsage-chronology.vercel.app/']], live:'https://logsage-chronology.vercel.app/' },
         { id:'incidentops', title:'IncidentOps', date:'2026-05-14', body:'A collector-first incident investigation system: engineering evidence in, cited and reviewable findings out.', repo:'https://github.com/Auro-rium/Ops-Incident-Core', gh:'Ops-Incident-Core', links:[] },
         { id:'audioforge', title:'AudioForge', date:'2026-05-29', body:'A reproducible audio-ML training pipeline with LoRA adaptation and published artifacts.', repo:'https://github.com/Auro-rium/audioforge', gh:'audioforge', links:[['Explainer','https://audioforge-explained.vercel.app/']], live:'https://audioforge-explained.vercel.app/' },
@@ -209,16 +212,16 @@
         { id:'skills', title:'Post-training Skills', date:'2026-08-21', body:'A field guide and local deep agent for learning the major parts of LLM post-training.', repo:'https://github.com/Auro-rium/posttraining-skills', gh:'posttraining-skills', links:[['Live site','https://posttraining-skills.vercel.app/']], live:'https://posttraining-skills.vercel.app/' },
         { id:'distillery', title:'Distillery', date:'2026-09-29', wip:true, body:'A sandbox-verified distillation autopilot on Nebius Token Factory. Building it now.', repo:'https://github.com/Auro-rium/distillery', gh:'distillery', links:[] }
       ];
-      const DAY = 864e5, D0 = Date.parse('2026-05-01'), D1 = Date.parse('2026-10-09');
+      const DAY = 864e5, D0 = Date.parse('2025-08-01'), D1 = Date.parse('2026-10-09');
       const fmt = t => new Date(t).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric', timeZone:'UTC' });
       const shipped = projects.map(p => Date.parse(p.date)), done = projects.filter(p => !p.wip).map(p => Date.parse(p.date));
 
       // illustrative loss: each shipped project steps the loss down
       const sig = x => 1 / (1 + Math.exp(-x));
-      const loss = t => 0.16 + 2.3 * Math.exp(-0.5 * done.reduce((a, d) => a + sig((t - d) / (3 * DAY)), 0));
+      const loss = t => 0.16 + 2.3 * Math.exp(-0.33 * done.reduce((a, d) => a + sig((t - d) / (3 * DAY)), 0));
       const prng = (a => () => { a |= 0; a = a + 0x6D2B79F5 | 0; let x = Math.imul(a ^ a >>> 15, 1 | a); x = x + Math.imul(x ^ x >>> 7, 61 | x) ^ x; return ((x ^ x >>> 14) >>> 0) / 4294967296; })(7);
       const days = []; for (let t = D0; t <= D1; t += DAY) days.push(t);
-      const raw = days.map(t => loss(t) + (prng() - .45) * (0.08 + 0.2 * loss(t)));
+      const raw = days.map(t => loss(t) + (prng() - .45) * (0.04 + 0.12 * loss(t)));
       const valid = days.map(t => loss(t) + 0.07 + 0.05 * Math.sin(t / DAY / 6));
 
       const plot = document.getElementById('plot'), svg = document.getElementById('svg'), card = document.getElementById('card'), readout = document.getElementById('readout');
@@ -235,11 +238,12 @@
         svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.innerHTML = '';
         plot.querySelectorAll('.cp,.cp-label').forEach(n => n.remove());
         for (let v = 0; v <= 2.5; v += .5) { el('line', { class:'grid', x1:M.l, x2:W - M.r, y1:Y(v), y2:Y(v) }); el('text', { class:'tick', x:M.l - 8, y:Y(v) + 4, 'text-anchor':'end' }).textContent = v.toFixed(1); }
-        for (let m = 4; m <= 9; m++) { const t = Date.UTC(2026, m, 1); if (t < D0 || t > D1) continue; el('text', { class:'tick', x:X(t), y:H - 8, 'text-anchor':'middle' }).textContent = new Date(t).toLocaleDateString('en-GB', { month:'short', timeZone:'UTC' }); }
+        for (let k = 0; k < 15; k++) { const t = Date.UTC(2025, 7 + k, 1); if (t < D0 || t > D1 || (W < 600 && k % 3)) continue; const d = new Date(t); el('text', { class:'tick', x:X(t), y:H - 8, 'text-anchor':'middle' }).textContent = d.toLocaleDateString('en-GB', { month:'short', timeZone:'UTC' }) + (d.getUTCMonth() === 0 || k === 0 ? ' ' + String(d.getUTCFullYear()).slice(2) : ''); }
         el('path', { class:'raw', d:path(raw) });
         el('path', { class:'val', d:path(valid) });
         el('path', { class:'smooth', d:path(days.map(loss)) });
         cross = el('line', { class:'cross', y1:M.t, y2:H - M.b, opacity:0 });
+        const taken = [];
         dots = projects.map((p, i) => {
           const t = shipped[i], b = document.createElement('button');
           b.className = 'cp' + (p.wip ? ' wip' : ''); b.type = 'button'; b.style.left = X(t) + 'px'; b.style.top = Y(loss(t)) + 'px';
@@ -249,9 +253,12 @@
           b.addEventListener('focus', () => { if (pinned === null) show(i); });
           b.addEventListener('click', e => { e.stopPropagation(); pinned = pinned === i ? null : i; pinned === null ? hide() : show(i); });
           plot.appendChild(b);
-          const l = document.createElement('span'); l.className = 'cp-label'; l.textContent = p.title;
-          const leftSide = X(t) > W - 170; l.style.left = (X(t) + (leftSide ? -16 : 16)) + 'px'; const crowded = i > 0 && X(t) - X(shipped[i - 1]) < 70; l.style.top = (Y(loss(t)) + (crowded ? 14 : -30)) + 'px'; if (leftSide) l.style.transform = 'translateX(-100%)';
-          plot.appendChild(l); labels[i] = l; return b;
+          const l = document.createElement('span'); l.className = 'cp-label'; l.textContent = p.title; l.style.visibility = 'hidden'; plot.appendChild(l);
+          const w = l.offsetWidth, leftSide = X(t) > W - w - 40, x0 = leftSide ? X(t) - 16 - w : X(t) + 16, tiers = [-30, 14, -54, 38];
+          let pick = tiers.findIndex((_, k) => !(taken[k] || []).some(([a, z]) => x0 < z + 10 && x0 + w > a)); if (pick < 0) pick = 0;
+          (taken[pick] = taken[pick] || []).push([x0, x0 + w]);
+          l.style.left = x0 + 'px'; l.style.top = (Y(loss(t)) + tiers[pick]) + 'px'; l.style.visibility = '';
+          labels[i] = l; return b;
         });
         if (active !== null) place(active);
       }
@@ -260,7 +267,9 @@
       const $ = id => document.getElementById(id);
       let hideTimer;
       const ghImg = p => `https://opengraph.githubassets.com/1/Auro-rium/${p.gh}`;
-            let curMode = 'repo';
+            $('shotImg').addEventListener('error', () => $('shotImg').closest('.shot').classList.add('nopic'));
+      $('shotImg').addEventListener('load', () => $('shotImg').closest('.shot').classList.remove('nopic'));
+      let curMode = 'repo';
       function setShot(p, mode) {
         curMode = mode;
         const shot = document.querySelector('.shot'), fr = $('shotFrame'), live = mode === 'live';
@@ -268,7 +277,7 @@
         if (live) {
           const k = shot.clientWidth / 1280; fr.style.width = '1280px'; fr.style.height = (shot.clientHeight / k) + 'px'; fr.style.transform = `scale(${k})`;
           if (fr.dataset.src !== p.live) { fr.src = p.live; fr.dataset.src = p.live; }
-        } else { $('shotImg').src = ghImg(p); $('shotImg').alt = `${p.title} GitHub repository preview`; }
+        } else { shot.dataset.name = 'Auro-rium/' + p.gh; shot.classList.remove('nopic'); $('shotImg').src = ghImg(p); $('shotImg').alt = `${p.title} GitHub repository preview`; }
         $('shotTabs').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === mode)));
       }
       function show(i) {
