@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+  schedule:
+    - cron: "0 0 * * *" # daily: refresh the contributions fallback snapshot
   workflow_dispatch:
 
 permissions:
@@ -33,6 +35,13 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      # the page fetches contributions live; this keeps the offline fallback fresh (non-fatal: keeps the committed snapshot on failure)
+      - name: Refresh contributions snapshot
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/snapshot-contributions.sh
 
       - name: Build static site
         run: npm run build

@@ -179,8 +179,8 @@
 
         <section id="activity">
           <div class="sec-head"><h2>GitHub, last 18 months</h2><a href="https://github.com/Auro-rium" target="_blank" rel="noopener">github.com/Auro-rium</a></div>
-          <div class="big" id="total">—<small>public contributions</small></div>
-          <div class="heat-wrap" style="margin-top:22px"><svg class="heat" id="heat" role="img" aria-label="Daily GitHub contributions over the last year"></svg></div>
+          <div class="big" id="total">—<small id="src">public contributions</small></div>
+          <div class="heat-wrap" style="margin-top:22px"><svg class="heat" id="heat" role="img" aria-label="Daily GitHub contributions over the last 18 months"></svg></div>
           <div class="heat-meta"><span id="heatTip">Hover a day for the count.</span><span class="scale">less <i style="background:#14130f"></i><i style="background:#4a3411"></i><i style="background:#8c5f1d"></i><i style="background:#c98a2c"></i><i style="background:#f2a541"></i> more</span></div>
         </section>
 
@@ -206,9 +206,19 @@
       const fmt = t => new Date(t).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric', timeZone:'UTC' });
       const el = (n, a, p) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); p.appendChild(e); return e; };
 
-      // github heatmap
+      // github heatmap: live from the public contributions API (CORS-enabled, mirrors the profile graph), snapshot as fallback
+      async function live() {
+        const now = new Date(), end = new Date(now - now.getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
+        const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 18, now.getUTCDate())).toISOString().slice(0, 10), ys = [];
+        for (let y = +start.slice(0, 4); y <= +end.slice(0, 4); y++) ys.push('y=' + y);
+        const r = await fetch('https://github-contributions-api.jogruber.de/v4/Auro-rium?' + ys.join('&'), { cache:'no-store' }); if (!r.ok) throw new Error(r.status);
+        const days = (await r.json()).contributions.filter(c => c.date >= start && c.date <= end).map(c => [c.date, c.count]).sort((a, b) => a[0].localeCompare(b[0]));
+        if (!days.length) throw new Error('empty');
+        return { total: days.reduce((a, d) => a + d[1], 0), days };
+      }
       async function heat() {
-        let data; try { data = await (await fetch('data/contributions.json')).json(); } catch { $('heatTip').textContent = 'Contribution data failed to load — open GitHub for the live graph.'; return; }
+        let data; try { data = await live(); $('src').textContent = 'public contributions · live'; }
+        catch { try { data = await (await fetch('data/contributions.json')).json(); $('src').textContent = `public contributions · snapshot to ${fmt(Date.parse(data.days[data.days.length - 1][0]))}`; } catch { $('heatTip').textContent = 'Contribution data failed to load — open GitHub for the live graph.'; return; } }
         requestAnimationFrame(() => { const hw = document.querySelector('.heat-wrap'); hw.scrollLeft = hw.scrollWidth; });
         $('total').firstChild.textContent = data.total.toLocaleString('en-US');
         const h = $('heat'), cell = 12, gap = 3, step = cell + gap, left = 28, top = 20, weeks = [];
